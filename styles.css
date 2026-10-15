@@ -57,3 +57,9 @@ select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-ac
 .sw{flex-direction:row;align-items:center;gap:8px;font-weight:600}.sw input{width:18px;height:18px;accent-color:var(--ink)}
 .clue{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}.clue input{margin-top:3px;width:17px;height:17px;accent-color:var(--ink)}
 #life .ca-box{margin-bottom:14px}@media(max-width:620px){.steps button{min-width:calc(33% - 6px)}}
+.modes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px auto 14px}.modes-q{color:#c9b07a;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.modes button{background:transparent;border:1px solid rgba(201,176,122,.55);color:#f3ead6;border-radius:999px;padding:9px 16px;font-weight:600;cursor:pointer}
+.modes button.on{background:#c9b07a;color:#0f1e3a;border-color:#c9b07a}
+#empOut textarea{width:100%;font:13px/1.45 Inter,sans-serif;margin:8px 0}#empOut details{margin:10px 0}#empOut summary{cursor:pointer;font-weight:600}
+table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-box{margin-bottom:14px}
+@media(max-width:620px){.modes button{flex:1 1 45%;padding:9px 10px;font-size:14px}}

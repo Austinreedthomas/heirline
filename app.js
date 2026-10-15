@@ -1,13 +1,15 @@
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LS={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-let found=LS.get("hl_found",[]), ctx=LS.get("hl_ctx",{}), tracker=LS.get("hl_tracker",{});
-const save=()=>{LS.set("hl_found",found);LS.set("hl_ctx",ctx);LS.set("hl_tracker",tracker)};
+let MODE=LS.get("hl_mode","loss");const CTXK=()=>MODE==="self"?"hl_ctx_self":"hl_ctx";
+let found=LS.get("hl_found",[]), ctx=LS.get(CTXK(),{}), tracker=LS.get("hl_tracker",{});
+const save=()=>{LS.set("hl_found",found);LS.set(CTXK(),ctx);LS.set("hl_tracker",tracker)};
+const UK=k=>(MODE==="self"?"self:":"")+k;
 
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.tab));
-function show(t){const order=["search","scan","life","plan","track"],k=order.indexOf(t);document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("done",i<k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+document.querySelector("nav.steps").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)show(b.dataset.tab)};
+function show(t){const order=[...document.querySelectorAll("nav.steps button")].map(b=>b.dataset.tab),k=order.indexOf(t);document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("done",i<k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
  document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("active",s.id===t));
- if(t==="plan")renderPlan(); if(t==="life")renderLife(); if(t==="track")renderTracker(); window.scrollTo(0,0)}
+ if(t==="plan")renderPlan(); if(t==="life")renderLife(); if(window.selfShow)selfShow(t); if(t==="track")renderTracker(); window.scrollTo(0,0)}
 
 function addAccount(a){const id=a.c+"|"+a.type.toLowerCase(); const t=a.type.toLowerCase();
  const dup=f=>f.id===id||(f.c===a.c&&a.src==="document"&&(t==="ira"&&/ira/i.test(f.type)||f.type.toLowerCase().includes(t)||t.includes(f.type.toLowerCase())));
@@ -17,8 +19,8 @@ let ucp=LS.get("hl_ucp",{});
 const UCP_LABEL={"":"Not checked yet",checked:"Checked","none":"Nothing found",found:"Found property"};
 function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last){el.innerHTML="";return}
  const states=[...new Set([ctx.state,...(ctx.otherStates||[])])].filter(s=>STATE_SITES[s]);
- const name=`${ctx.last}, ${ctx.first}`;
- const row=(key,S)=>{const st=ucp[key]||"";return `<div class="ucp-row"><div class="ucp-info"><b>${S.site}</b><span>${key==="MM"?S.name:S.name+" · official state site"}</span></div>
+ const allNames=[{first:ctx.first,last:ctx.last},...(ctx.aliases||[])].filter(n=>n.last);const name=allNames.map(n=>`${n.last}, ${n.first}`).join("; ");
+ const row=(key,S)=>{const st=ucp[UK(key)]||"";return `<div class="ucp-row"><div class="ucp-info"><b>${S.site}</b><span>${key==="MM"?S.name:S.name+" · official state site"}</span></div>
   <div class="ucp-act"><a class="btn" href="${S.url}" target="_blank" rel="noopener">Search ↗</a>
   <select data-ucp="${key}" aria-label="Result for ${S.site}">${Object.entries(UCP_LABEL).map(([v,l])=>`<option value="${v}" ${v===st?"selected":""}>${l}</option>`).join("")}</select></div></div>`};
  el.innerHTML=`<div class="card ucp"><div class="ucp-head"><h3>Unclaimed property</h3><span class="tag gold">${states.length+1} place${states.length?"s":""} to check</span></div>
@@ -31,8 +33,8 @@ function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last){el.innerHTML="";retu
  <p class="note">Marking a result "Found property" adds it to your claim plan and tracker.</p></div>`;
  $("#copyName").onclick=async e=>{try{await navigator.clipboard.writeText(name);e.target.textContent="Copied"}catch{prompt("Copy:",name)}};
  $("#searchAll").onchange=e=>{ctx.searchAll=e.target.checked;save();searchAuto(states)};searchAuto(states);
- el.querySelectorAll("[data-ucp]").forEach(s=>s.onchange=()=>{const k=s.dataset.ucp;ucp[k]=s.value;LS.set("hl_ucp",ucp);
-  const S=k==="MM"?MISSING_MONEY:STATE_SITES[k];const id="ucp|"+k;
+ el.querySelectorAll("[data-ucp]").forEach(s=>s.onchange=()=>{const k=s.dataset.ucp;ucp[UK(k)]=s.value;LS.set("hl_ucp",ucp);
+  const S=k==="MM"?MISSING_MONEY:STATE_SITES[k];const id="ucp|"+UK(k);
   if(s.value==="found"){if(!found.some(f=>f.id===id)){found.push({id,c:"ucp",type:"Unclaimed property · "+S.name,bal:"Shown on state site",src:"unclaimed-property search",url:S.url});
    tracker[id]??={status:"Not started",notes:"Found via "+S.site,follow:""};save()}}
   else{const i=found.findIndex(f=>f.id===id);if(i>=0&&!(tracker[id]&&tracker[id].status!=="Not started")){found.splice(i,1);delete tracker[id];save()}}})}
@@ -42,7 +44,7 @@ async function covered(){return COVERED??=await (await fetch("data/states.json")
 async function shardFor(st,last){const m=metaC[st]??=await (await fetch(`data/${st.toLowerCase()}/meta.json`)).json();
  const k=nm(last);let key=k.slice(0,2);if(m.shards[key]==="split")key=k.slice(0,3);if(!m.shards[key])return [m,null];
  return [m,shardC[st+key]??=await (await fetch(`data/${st.toLowerCase()}/${key}.json`)).json()]}
-function matchRows(sh){const L=nm(ctx.last),F=nm(ctx.first),city=(ctx.city||"").toUpperCase().trim();const rows=[];if(!sh)return rows;
+function matchRows(sh,first=ctx.first,last=ctx.last){const L=nm(last),F=nm(first),city=(ctx.city||"").toUpperCase().trim();const rows=[];if(!sh)return rows;
  for(const r of sh.r){if(nm(r[0])!==L)continue;const fr=nm((r[1]||"").split(" ")[0]);let m=null;
   if(F&&fr===F)m="exact";else if(F&&fr[0]===F[0]&&(fr.length===1||F.startsWith(fr)||fr.startsWith(F)))m="close";if(!m)continue;
   if(city&&r[2]!==city)continue;rows.push({m,last:r[0],rest:r[1],city:r[2],zip:r[3],type:sh.t[r[4]],amt:r[5],holder:sh.h[r[6]],id:r[7],paid:r[8]})}
@@ -53,9 +55,9 @@ async function searchAuto(rel){const box=$("#autoMatches");if(!box)return;
   if(!list.length){box.innerHTML=`<p class="note">None of the selected states publish open data yet. Turn on "Search all covered states" or use the manual searches below.</p>`;return}
   box.innerHTML=list.map(s=>`<div class="ca-box" id="auto-${s}"><p class="note">Searching ${cov[s].name}'s public records…</p></div>`).join("");
   let total=0;
-  for(const st of list){const el=$("#auto-"+st);const [m,sh]=await shardFor(st,ctx.last);const rows=matchRows(sh);total+=rows.length;const shown=rows.slice(0,50);
-   el.innerHTML=`<div class="ca-head"><h4 style="margin:0">${m.name} · automatic search${rel.includes(st)?"":' <span class="tag">not a state they lived in</span>'}</h4><span class="note">Data as of ${m.asOf} · records of ${fmt(m.minAmount)}+ only · ${m.records.toLocaleString()} records</span></div>
-   ${rows.length?`<p class="note">${rows.length} possible match${rows.length>1?"es":""} for <b>${esc(ctx.last)}, ${esc(ctx.first)}</b>${ctx.city?" in "+esc(ctx.city.toUpperCase()):""}${rows.length>50?" (showing top 50)":""}. Confirm the address matches before claiming.</p>
+  for(const st of list){const el=$("#auto-"+st);let m,rows=[];for(const n of [{first:ctx.first,last:ctx.last},...(ctx.aliases||[])].filter(n=>n.last)){const [mm,sh]=await shardFor(st,n.last);m=mm;const seen=new Set(rows.map(r=>r.id));matchRows(sh,n.first,n.last).forEach(r=>{if(!seen.has(r.id))rows.push(r)})}rows.sort((a,b)=>(a.m>b.m?-1:a.m<b.m?1:0)||b.amt-a.amt);total+=rows.length;const shown=rows.slice(0,50);
+   el.innerHTML=`<div class="ca-head"><h4 style="margin:0">${m.name} · automatic search${rel.includes(st)?"":' <span class="tag">not a state ${MODE==="self"?"you":"they"} lived in</span>'}</h4><span class="note">Data as of ${m.asOf} · records of ${fmt(m.minAmount)}+ only · ${m.records.toLocaleString()} records</span></div>
+   ${rows.length?`<p class="note">${rows.length} possible match${rows.length>1?"es":""} for <b>${esc(ctx.last)}, ${esc(ctx.first)}${(ctx.aliases||[]).length?" (and other names)":""}</b>${ctx.city?" in "+esc(ctx.city.toUpperCase()):""}${rows.length>50?" (showing top 50)":""}. Confirm the address matches before claiming.</p>
    <div class="tbl"><table><tr><th>Match</th><th>Owner on record</th><th>City</th><th>Amount</th><th>Holder</th><th>Property ID</th><th></th></tr>
    ${shown.map(r=>{const id=st.toLowerCase()+"|"+r.id,on=found.some(f=>f.id===id);return `<tr><td><span class="tag ${r.m==="exact"?"gold":""}">${r.m}</span></td><td>${esc(r.last+" "+r.rest)}</td><td>${esc(r.city)} ${esc(r.zip)}</td><td>${fmt(r.amt)}${r.paid?' <small class="no">claim paid before</small>':""}</td><td>${esc(r.holder)}<br><small class="note">${esc(r.type)}</small></td><td>${esc(r.id)}</td>
     <td><button class="small" data-auto="${st}" data-rec='${esc(JSON.stringify(r))}' ${on?"disabled":""}>${on?"In tracker":"Add to tracker"}</button></td></tr>`}).join("")}</table></div>

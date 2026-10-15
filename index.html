@@ -9,6 +9,7 @@
 <div class="wrap hero"><h1>Find and claim what your loved one left behind.</h1>
 <p>A calm, guided path through retirement, HSA, life insurance and crypto accounts, one custodian at a time.</p>
 <p class="trust"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> Private by design: everything stays in this browser. No real SSNs, please.</p></div>
+<div class="wrap modes" role="radiogroup" aria-label="What brings you here?"><span class="modes-q">What brings you here?</span><button type="button" role="radio" data-mode="loss">A loved one passed away</button><button type="button" role="radio" data-mode="self">Find my own money</button></div>
 <nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="life"><span>3</span>Life insurance</button><button data-tab="plan"><span>4</span>Claim plan</button><button data-tab="track"><span>5</span>Tracker</button></nav></header>
 <main class="wrap">
 <section id="search" class="tab active"><div class="card"><h2>Search the custodian network</h2>
@@ -52,6 +53,35 @@
 <p class="note">Found a policy? Scan the document in <b>Documents</b> to add it to your claim plan, or note the insurer in the tracker.</p></div></section>
 <section id="plan" class="tab"><div id="planOut"></div></section>
 <section id="track" class="tab"><div id="trackOut"></div></section>
+
+<section id="s-about" class="tab"><div class="card"><h2>About you</h2><p class="note">We use this only to search public records and fill in letters. It stays in this browser. No SSN needed here.</p>
+<form id="selfForm"><div class="grid"><label>First name<input name="first" required placeholder="Ellen"></label><label>Last name<input name="last" required placeholder="Okafor"></label></div>
+<label>Other or maiden names <small>One per line, e.g. "Ellen Brooks" or just "Brooks"</small><textarea name="aliases" rows="2"></textarea></label>
+<div class="grid"><label>States you've lived in <small>Ctrl/⌘-click or tap to choose several</small><select name="states" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label>
+<label>Last city you lived in <small>Optional: narrows the automatic search</small><input name="city"></label></div>
+<label>Past employers <small>One per line</small><textarea name="employers" rows="3" placeholder="Acme Logistics&#10;Brightwater Bank"></textarea></label>
+<button class="primary">Save and search</button></form></div></section>
+<section id="s-ucp" class="tab"><div id="s-ucpHost"></div></section>
+<section id="s-ret" class="tab"><div class="card"><h2>Retirement and lost accounts</h2>
+<div class="ca-box"><h4>DOL Retirement Savings Lost and Found</h4><p class="note">The U.S. Department of Labor's free database of workplace retirement plans that owe people money. You sign in with an identity-verified Login.gov account and it searches your own SSN, then shows the plan and the administrator to contact. Heirline never sees your SSN.</p>
+<a class="btn" href="https://lostandfound.dol.gov/" target="_blank" rel="noopener">Open Lost and Found ↗</a> <button class="small" data-trackx="self|dol~dol~DOL Lost and Found search~https://lostandfound.dol.gov/">Add to tracker</button></div>
+<div class="ca-box"><h4>PBGC unclaimed pensions</h4><p class="note">The Pension Benefit Guaranty Corporation lists people owed pensions from plans that ended. Search by last name and the last 4 digits of your SSN (type them on PBGC's site, not here). A match is a first step: you then contact PBGC.</p>
+<a class="btn" href="https://www.pbgc.gov/workers-retirees/find-unclaimed-retirement-benefits/search-unclaimed" target="_blank" rel="noopener">Search PBGC ↗</a> <button class="small" data-trackx="self|pbgc~pbgc~PBGC unclaimed pension search~https://www.pbgc.gov/workers-retirees/find-unclaimed-retirement-benefits/search-unclaimed">Add to tracker</button></div>
+<h3>Your past employers</h3><div id="empOut"></div></div></section>
+<section id="s-other" class="tab"><div class="card"><h2>Other places to look</h2>
+<div class="ca-box"><h4>Savings bonds and Treasury securities</h4><p class="note">Treasury Hunt closed on September 30, 2025. Matured, unclaimed Treasury securities now go through state unclaimed-property programs, so search every state you've lived in. For lost, stolen or destroyed paper bonds, use TreasuryDirect's forms.</p>
+<a class="btn" href="https://unclaimed.org/" target="_blank" rel="noopener">State programs ↗</a> <a class="btn" href="https://www.treasurydirect.gov/savings-bonds/forms/" target="_blank" rel="noopener">Bond forms ↗</a> <a class="btn" href="https://www.treasurydirect.gov/savings-bonds/treasury-hunt/" target="_blank" rel="noopener">About the change ↗</a></div>
+<div class="ca-box"><h4>Old HSAs</h4><p class="note">HSAs stay yours after you leave a job. Check old benefits paperwork or pay stubs for the HSA provider's name, then log in or call. Dormant HSAs can be turned over to the state, so the unclaimed-property step also covers them.</p>
+<button class="small" data-trackx="self|hsa~other~Old HSA from a past employer~">Add to tracker</button></div>
+<div class="ca-box"><h4>Old bank and brokerage accounts</h4><p class="note">Look for old statements, 1099 tax forms, or emails from banks and brokers. Accounts with no activity for a few years are sent to the state, so search each state you've lived in. Brokerage shares may be sold by the state, but you can usually still claim their value.</p>
+<button class="small" data-trackx="self|bank~other~Old bank or brokerage account~">Add to tracker</button></div>
+<div class="ca-box"><h4>IRS refunds</h4><p class="note">Use Where's My Refund to check a recent return or start a trace for a lost check. If you never filed for a year you were owed a refund, you generally have three years to claim it. For a missing check, the IRS line is 800-829-1954.</p>
+<a class="btn" href="https://www.irs.gov/refunds" target="_blank" rel="noopener">Where's My Refund ↗</a> <a class="btn" href="https://www.usa.gov/unclaimed-tax-refunds" target="_blank" rel="noopener">Unclaimed tax refunds ↗</a></div>
+<p class="note">Think you're the beneficiary of someone else's life insurance? The <a href="https://eapps.naic.org/life-policy-locator/" target="_blank" rel="noopener">NAIC Life Insurance Policy Locator</a> searches on behalf of beneficiaries of a person who has died.</p></div></section>
+<section id="s-bene" class="tab"><div class="card"><h2>Beneficiary checkup</h2><p class="note">Accounts with a named beneficiary pass directly and quickly. Accounts without one can end up in probate. List what you own and check each one. <b id="beneSum"></b></p>
+<div class="tbl"><table class="bene"><tr><th>Provider</th><th>Account</th><th>Beneficiary named?</th><th>Last reviewed</th><th>Update</th><th></th></tr><tbody id="beneRows"></tbody></table></div>
+<button class="small" id="beneAdd">+ Add account</button>
+<p class="note">Review after marriage, divorce, a birth or a death. A beneficiary form usually overrides your will.</p></div></section>
 </main><footer class="wrap">Heirline prototype · fictional sample data · not legal, tax or financial advice · Contact: <a href="mailto:heirline@mail.grokbot.com">heirline@mail.grokbot.com</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="data.js"></script><script src="app.js"></script><script src="chat.js"></script></body></html>
+<script src="data.js"></script><script src="app.js"></script><script src="self.js"></script><script src="chat.js"></script></body></html>
