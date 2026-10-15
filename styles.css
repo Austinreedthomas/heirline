@@ -63,4 +63,4 @@ select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-ac
 #empOut textarea{width:100%;font:13px/1.45 Inter,sans-serif;margin:8px 0}#empOut details{margin:10px 0}#empOut summary{cursor:pointer;font-weight:600}
 table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-box{margin-bottom:14px}
 @media(max-width:620px){.modes button{flex:1 1 45%;padding:9px 10px;font-size:14px}}
-@media(max-width:620px){table.bene tr:first-child{display:none}table.bene,table.bene tbody,table.bene tr,table.bene td{display:block;width:100%}table.bene tr{padding:12px 0;border-bottom:1px solid var(--line)}table.bene td{border:0;padding:4px 0}table.bene input,table.bene select{width:100%}}
+@media(max-width:620px){.tbl table.bene{min-width:0}table.bene tr.bh{display:none}table.bene,table.bene tbody,table.bene tr,table.bene td{display:block;width:100%}table.bene tr{padding:12px 0;border-bottom:1px solid var(--line)}table.bene td{border:0;padding:4px 0}table.bene input,table.bene select{width:100%;box-sizing:border-box;min-width:0}}
