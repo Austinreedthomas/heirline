@@ -18,7 +18,8 @@
 <div class="grid"><label>First name<input name="first" required></label><label>Last name<input name="last" required></label>
 <label>Date of birth<input type="date" name="dob"></label><label>Date of death<input type="date" name="dod"></label>
 <label>SSN <small>only the last four digits are used</small><input name="ssn" type="password" inputmode="numeric" maxlength="11" placeholder="•••-••-1234"></label>
-<label>State<select name="state"><option>FL</option><option>TX</option><option>CA</option><option>NY</option><option>OH</option><option>PA</option><option>GA</option><option>Other</option></select></label></div>
+<label>State of death<select name="state"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option><option value="Other">Other</option></select></label>
+<label>Other states they lived in <small>Ctrl/⌘-click or tap to choose several</small><select name="otherStates" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label></div>
 <h4>About you</h4>
 <div class="grid"><label>Your full name<input name="me" placeholder="Daniel Sample"></label>
 <label>Relationship<select name="rel"><option>Child</option><option>Spouse</option><option>Sibling</option><option>Parent</option><option>Other</option></select></label>
@@ -26,7 +27,7 @@
 <button class="primary">Search accounts</button></form>
 <p class="note">🔒 Real lookups would require data-sharing partnerships with each custodian. This prototype searches a fictional network of 8 sample people, compares only the last four SSN digits, and stores nothing.</p></div>
 <div id="results"></div>
-<div class="card soft"><h3>Also check public unclaimed-property records</h3><ul id="ucp" class="links"></ul></div></section>
+<div id="ucpPanel"></div></section>
 <section id="scan" class="tab"><div class="card"><h2>Scan documents for account clues</h2>
 <p>Tax forms such as 1099-R, 5498 and 5498-SA, and account statements, often reveal accounts the family didn't know about. Text and PDF files are read in your browser and never uploaded.</p>
 <div class="drop"><input type="file" id="files" multiple accept=".pdf,.txt,image/*"><button id="sampleDocs" class="primary">Use sample documents</button></div>

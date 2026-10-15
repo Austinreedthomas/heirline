@@ -13,16 +13,31 @@ function addAccount(a){const id=a.c+"|"+a.type.toLowerCase(); const t=a.type.toL
  const dup=f=>f.id===id||(f.c===a.c&&a.src==="document"&&(t==="ira"&&/ira/i.test(f.type)||f.type.toLowerCase().includes(t)||t.includes(f.type.toLowerCase())));
  const ex=found.find(dup); if(ex){if(a.hint&&!ex.hint){ex.hint=a.hint;save()}return false} found.push({...a,id}); save(); return true}
 
-function renderUCP(state){const s=STATE_SITES[state];
- $("#ucp").innerHTML=`<li><a href="https://www.missingmoney.com" target="_blank" rel="noopener">MissingMoney.com</a> (multi-state search)</li>
- <li><a href="https://www.fltreasurehunt.gov" target="_blank" rel="noopener">Florida Treasure Hunt</a> (fltreasurehunt.gov)</li>
- ${s&&state!=="FL"?`<li><a href="${s}" target="_blank" rel="noopener">${state} unclaimed property</a></li>`:""}
- <li><a href="https://unclaimed.org/search-property/" target="_blank" rel="noopener">NAUPA: find any state's site</a></li>`}
-renderUCP(ctx.state||"FL");
+let ucp=LS.get("hl_ucp",{});
+const UCP_LABEL={"":"Not checked yet",checked:"Checked","none":"Nothing found",found:"Found property"};
+function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last){el.innerHTML="";return}
+ const states=[...new Set([ctx.state,...(ctx.otherStates||[])])].filter(s=>STATE_SITES[s]);
+ const name=`${ctx.last}, ${ctx.first}`;
+ const row=(key,S)=>{const st=ucp[key]||"";return `<div class="ucp-row"><div class="ucp-info"><b>${S.site}</b><span>${key==="MM"?S.name:S.name+" · official state site"}</span></div>
+  <div class="ucp-act"><a class="btn" href="${S.url}" target="_blank" rel="noopener">Search ↗</a>
+  <select data-ucp="${key}" aria-label="Result for ${S.site}">${Object.entries(UCP_LABEL).map(([v,l])=>`<option value="${v}" ${v===st?"selected":""}>${l}</option>`).join("")}</select></div></div>`};
+ el.innerHTML=`<div class="card ucp"><div class="ucp-head"><h3>Unclaimed property</h3><span class="tag gold">${states.length+1} place${states.length?"s":""} to check</span></div>
+ <p class="note">States hold forgotten balances, uncashed checks and old accounts. Search the name <b>${esc(name)}</b> <button type="button" class="link" id="copyName">Copy name</button>
+ The official sites don't accept a pre-filled name in the link (they use a bot check), so each button opens the search page and you paste the name.</p>
+ ${row("MM",MISSING_MONEY)}${states.map(s=>row(s,STATE_SITES[s])).join("")}
+ ${ctx.state==="Other"?`<p class="note">State not listed? Use <a href="https://unclaimed.org/search-property/" target="_blank" rel="noopener">NAUPA's directory of every state's site</a>.</p>`:""}
+ <p class="note">Marking a result "Found property" adds it to your claim plan and tracker.</p></div>`;
+ $("#copyName").onclick=async e=>{try{await navigator.clipboard.writeText(name);e.target.textContent="Copied"}catch{prompt("Copy:",name)}};
+ el.querySelectorAll("[data-ucp]").forEach(s=>s.onchange=()=>{const k=s.dataset.ucp;ucp[k]=s.value;LS.set("hl_ucp",ucp);
+  const S=k==="MM"?MISSING_MONEY:STATE_SITES[k];const id="ucp|"+k;
+  if(s.value==="found"){if(!found.some(f=>f.id===id)){found.push({id,c:"ucp",type:"Unclaimed property · "+S.name,bal:"Shown on state site",src:"unclaimed-property search",url:S.url});
+   tracker[id]??={status:"Not started",notes:"Found via "+S.site,follow:""};save()}}
+  else{const i=found.findIndex(f=>f.id===id);if(i>=0&&!(tracker[id]&&tracker[id].status!=="Not started")){found.splice(i,1);delete tracker[id];save()}}})}
+renderUCP();
 
 $("#searchForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
  const ssn4=(f.ssn||"").replace(/\D/g,"").slice(-4); e.target.ssn.value=""; // never kept
- ctx={first:f.first.trim(),last:f.last.trim(),dob:f.dob,dod:f.dod,state:f.state,me:f.me.trim(),rel:f.rel,role:f.role}; save(); renderUCP(f.state);
+ ctx={first:f.first.trim(),last:f.last.trim(),dob:f.dob,dod:f.dod,state:f.state,otherStates:[...e.target.otherStates.selectedOptions].map(o=>o.value),me:f.me.trim(),rel:f.rel,role:f.role}; save(); renderUCP();
  const n=s=>s.toLowerCase().trim();
  const matches=PEOPLE.filter(p=>n(p.last)===n(f.last)&&n(p.first)===n(f.first)&&(!f.dob||p.dob===f.dob)&&(!ssn4||p.ssn4===ssn4));
  const out=$("#results");
@@ -85,14 +100,14 @@ ${d.me||"[Your name]"}
 `}
 function renderPlan(){const out=$("#planOut");
  if(!found.length){out.innerHTML=`<div class="card">No accounts yet. Run a search or scan documents first.</div>`;return}
- const custs=[...new Set(found.map(a=>a.c))];
+ const custs=[...new Set(found.map(a=>a.c==="ucp"?a.id:a.c))];
  out.innerHTML=`<div class="card"><h2>Claim plan</h2><p>${found.length} account(s) at ${custs.length} custodian(s).</p>
  <p><b>Order ${custs.length+1} certified death certificates</b> (one per custodian + one spare).</p><button id="clearAll">Clear all accounts</button></div>`+
  found.map((a,i)=>{const C=CUSTODIANS[a.c];return `<div class="card"><h3>${C.name} · ${esc(a.type)}</h3>
  <p class="note">Balance: ${esc(a.bal)} · Source: ${a.src}${a.hint?" · "+esc(a.hint):""}</p>
  <b>Steps</b><ol>${C.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
  <b>Document checklist</b><ul>${C.docs.map((d,j)=>`<li><label style="flex-direction:row;gap:6px"><input type="checkbox" data-doc="${a.id}|${j}" ${tracker[a.id]?.docs?.[j]?"checked":""}> ${d}</label></li>`).join("")}</ul>
- <p><a href="${C.url}" target="_blank" rel="noopener">Official ${C.name} page ↗</a></p>
+ <p><a href="${a.url||C.url}" target="_blank" rel="noopener">Official ${a.c==="ucp"?"state search":C.name} page ↗</a></p>
  <details><summary>Cover letter</summary><pre id="L${i}">${esc(letter(a))}</pre>
  <button data-copy="${i}">Copy</button><button data-dl="${i}">Download .txt</button></details>
  <button data-rm="${i}">Remove</button></div>`}).join("");
@@ -101,7 +116,7 @@ function renderPlan(){const out=$("#planOut");
  out.querySelectorAll("[data-dl]").forEach(b=>b.onclick=()=>{const a=found[b.dataset.dl];const blob=new Blob([letter(a)],{type:"text/plain"});const u=URL.createObjectURL(blob);
   const l=document.createElement("a");l.href=u;l.download=`Heirline_${a.c}_cover_letter.txt`;l.click();URL.revokeObjectURL(u)});
  out.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{found.splice(+b.dataset.rm,1);save();renderPlan()});
- $("#clearAll").onclick=()=>{if(confirm("Clear all accounts and tracker?")){found=[];tracker={};save();renderPlan()}};
+ $("#clearAll").onclick=()=>{if(confirm("Clear all accounts and tracker?")){found=[];tracker={};ucp={};LS.set("hl_ucp",ucp);save();renderUCP();renderPlan()}};
 }
 
 // ---- Tracker ----

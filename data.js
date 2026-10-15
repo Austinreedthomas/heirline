@@ -37,7 +37,24 @@ const PEOPLE = [
  {first:"James",last:"Sampleton",dob:"1958-02-22",dod:"2026-10-01",ssn4:"7777",state:"GA",
   accounts:[{c:"empower",type:"401(k)",bal:"$100k–$250k",bens:["Grace Sampleton"]},{c:"fidelity",type:"Roth IRA",bal:"$25k–$50k",bens:["Grace Sampleton"]},{c:"coinbase",type:"Crypto exchange account",bal:"$1k–$10k",bens:[]}]}
 ];
-const STATE_SITES = {FL:"https://www.fltreasurehunt.gov",TX:"https://www.claimittexas.gov",CA:"https://ucpi.sco.ca.gov",NY:"https://www.osc.ny.gov/unclaimed-funds",OH:"https://unclaimedfunds.ohio.gov",PA:"https://www.patreasury.gov/unclaimed-property/",GA:"https://gaclaims.unclaimedproperty.com"};
+// Official unclaimed-property search pages. Checked Oct 2026: none pre-fill names from URL parameters
+// (they use a bot check and ignore lastName/firstName params), so set prefill:false and offer "copy name".
+const STATE_SITES = {
+ FL:{name:"Florida",site:"Florida Treasure Hunt",url:"https://www.fltreasurehunt.gov/app/claim-search",prefill:false},
+ GA:{name:"Georgia",site:"Georgia Unclaimed Property",url:"https://gaclaims.unclaimedproperty.com/en/Property/SearchIndex",prefill:false},
+ NY:{name:"New York",site:"NY Office of Unclaimed Funds",url:"https://ouf.osc.ny.gov/app/claim-search",prefill:false},
+ CA:{name:"California",site:"California ClaimIt",url:"https://claimit.ca.gov/",prefill:false},
+ TX:{name:"Texas",site:"ClaimItTexas",url:"https://www.claimittexas.gov/app/claim-search",prefill:false},
+ NC:{name:"North Carolina",site:"NC Cash",url:"https://unclaimed.nccash.gov/app/claim-search",prefill:false},
+ PA:{name:"Pennsylvania",site:"Search & Claim PA",url:"https://www.searchandclaimpa.gov/app/claim-search",prefill:false},
+ OH:{name:"Ohio",site:"Ohio Unclaimed Funds",url:"https://unclaimedfunds.ohio.gov/app/claim-search",prefill:false},
+ IL:{name:"Illinois",site:"Illinois I-Cash",url:"https://icash.illinoistreasurer.gov/app/claim-search",prefill:false},
+ VA:{name:"Virginia",site:"Virginia Money Search",url:"https://www.vamoneysearch.gov/app/claim-search",prefill:false}
+};
+const MISSING_MONEY={name:"MissingMoney.com",site:"Multi-state search (NAUPA)",url:"https://missingmoney.com/app/claim-search",prefill:false};
+CUSTODIANS.ucp={name:"State unclaimed property",url:"https://unclaimed.org/search-property/",
+ steps:["Open the state's official search and look up the deceased's name (try maiden names and past cities).","Select the matching property and start a claim on the state site; claims for a deceased owner go to heirs or the estate.","Upload or mail the documents the state asks for.","Track the claim number the state gives you."],
+ docs:["Certified death certificate","Proof of your relationship (birth/marriage certificate)","Letters testamentary or small-estate affidavit (if required by the state)","Your photo ID","Proof of the deceased's address at the time (old statement or bill)"]};
 const SAMPLE_TEXTS = {
  "1099R_Fidelity_2025.txt": "FORM 1099-R  2025  Distributions From Pensions, Annuities, Retirement or Profit-Sharing Plans, IRAs\nPAYER: Fidelity Investments, PO Box 770002, Cincinnati OH 45277\nRECIPIENT: MARGARET A. SAMPLE   Recipient TIN: XXX-XX-4821\nAccount number: Z12-345678 (Traditional IRA)\nBox 1 Gross distribution: 12,400.00   Box 7 Distribution code: 7\nSAMPLE DOCUMENT - NOT REAL\n",
  "5498SA_HealthEquity_2025.txt": "FORM 5498-SA  2025  HSA, Archer MSA, or Medicare Advantage MSA Information\nTRUSTEE: HealthEquity, Inc., Draper UT\nPARTICIPANT: MARGARET A. SAMPLE   TIN: XXX-XX-4821\nAccount number: HE-55512 Health Savings Account (HSA)\nBox 5 Fair market value of HSA: 9,870.12\nSAMPLE DOCUMENT - NOT REAL\n",
