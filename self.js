@@ -1,17 +1,10 @@
 // ---- "Find my own money" mode ----
-Object.assign(CUSTODIANS,{emp:{name:"Former employer plan"},dol:{name:"DOL Retirement Savings Lost and Found"},pbgc:{name:"PBGC unclaimed pensions"},other:{name:"Other source"}});
+{const S={steps:["Contact them and ask whether they hold money for you.","Ask for the claim or distribution forms.","Return them with ID."],docs:["Photo ID","Proof of address history (if asked)"]};Object.assign(CUSTODIANS,{emp:{name:"Former employer plan",...S},dol:{name:"DOL Retirement Savings Lost and Found",url:"https://lostandfound.dol.gov/",...S},pbgc:{name:"PBGC unclaimed pensions",url:"https://www.pbgc.gov/workers-retirees/find-unclaimed-retirement-benefits/search-unclaimed",...S},other:{name:"Other source",...S}})}
 const LOSS_NAV=$("nav.steps").innerHTML;
 const SELF_NAV=["s-about|About you","s-ucp|Unclaimed property","s-ret|Retirement","s-other|Other places","s-bene|Beneficiary checkup","track|Tracker"].map((x,i)=>{const [t,l]=x.split("|");return `<button data-tab="${t}"><span>${i+1}</span>${l}</button>`}).join("");
 const HERO={loss:["Find and claim what your loved one left behind.","A calm, guided path through retirement, HSA, life insurance and crypto accounts, one custodian at a time."],
  self:["Find money that's already yours.","Old 401(k)s, forgotten pensions, uncashed checks and stray accounts, plus a checkup so your own family never has to search."]};
 let emp=LS.get("hl_emp",{}),bene=LS.get("hl_bene",[]);
-const BENE_LINKS={fidelity:["Fidelity","https://www.fidelity.com/customer-service/how-to-update-account-beneficiaries","Some workplace accounts need spouse consent to name someone else."],
- vanguard:["Vanguard","https://support.vanguard.com/account-settings/beneficiaries",""],
- schwab:["Schwab","https://www.schwab.com/estate-planning/faqs","Log in, then update beneficiaries under your account settings."],
- empower:["Empower","https://www.empower.com/","Log in, open the account, then choose Beneficiaries. Your employer's plan may handle it differently."],
- healthequity:["HealthEquity (HSA)","https://www.healthequity.com/help-center/articles/7910780-adding-an-hsa-beneficiary","Non-spouse beneficiaries in some states need an extra signed form."],
- coinbase:["Coinbase","https://help.coinbase.com/",""],
- other:["Other","",""]};
 function setMode(m){MODE=m;LS.set("hl_mode",m);ctx=LS.get(CTXK(),{});document.body.dataset.mode=m;
  document.querySelectorAll("[data-mode]").forEach(b=>{b.classList.toggle("on",b.dataset.mode===m);b.setAttribute("aria-checked",b.dataset.mode===m)});
  $(".hero h1").textContent=HERO[m][0];$(".hero h1+p").textContent=HERO[m][1];
@@ -44,17 +37,29 @@ function renderRet(){const out=$("#empOut");const E=ctx.employers||[];
  out.querySelectorAll("[data-trk]").forEach(b=>b.onclick=()=>{const e=E[b.dataset.trk];track("emp|"+e,"emp",e+" retirement plan","Past employer","","Request letter to plan administrator");b.textContent="In tracker"});
  out.querySelectorAll("[data-go]").forEach(a=>a.onclick=ev=>{ev.preventDefault();show(a.dataset.go)})}
 document.querySelectorAll("[data-trackx]").forEach(b=>b.onclick=()=>{const [id,c,type,url]=b.dataset.trackx.split("~");track(id,c,type,"Self search",url,"");b.textContent="In tracker";b.disabled=true});
+const PROV_LIST=`<datalist id="provList">${PROVIDERS.map(p=>`<option value="${esc(p.name)}">${p.group}</option>`).join("")}</datalist>`;
+const provOf=r=>PROVIDER_BY_ID[r.c]||null;
+function updCell(r){const p=provOf(r);if(!p&&!r.name)return `<small class="note">Pick a provider.</small>`;if(!p)return `<small class="note">Other provider: log in to their site or call to check and update beneficiaries.</small>`;
+ const link=(t)=>p.url?`<a href="${p.url}" target="_blank" rel="noopener">${t} ↗</a>`:"";const note=p.note?`<br><small class="note">${esc(p.note)}</small>`:"";
+ if(p.kind==="none")return `<span class="no">No beneficiary option</span>${note}${p.url?"<br>"+link("Their estate process"):""}${r.c==="coinbase"||p.group==="Crypto"?`<br><small class="note">Plan for crypto with a will or trust, or self-custody with multisig or Shamir backup.</small>`:""}`;
+ if(p.kind==="pod")return `<span class="tag gold">POD available</span><br>${link("How to add")}${note}`;
+ if(p.kind==="login")return `${link("Log in to update")}${note}`;
+ if(p.kind==="unverified")return `<span class="tag">Not verified</span><br>${link("Provider site")}${note}`;
+ return `${link("How to update")}${note}`}
 function renderBene(){const rows=$("#beneRows");
- rows.innerHTML=bene.length?bene.map((r,i)=>{const L=BENE_LINKS[r.c]||BENE_LINKS.other;const stale=r.rev&&r.rev<new Date(Date.now()-3*365*864e5).toISOString().slice(0,10);
-  return `<tr><td><select data-b="${i}" data-k="c">${Object.entries(BENE_LINKS).map(([k,v])=>`<option value="${k}" ${k===r.c?"selected":""}>${v[0]}</option>`).join("")}</select></td>
+ rows.innerHTML=bene.length?bene.map((r,i)=>{const p=provOf(r);const none=p&&p.kind==="none";const stale=r.rev&&r.rev<new Date(Date.now()-3*365*864e5).toISOString().slice(0,10);
+  return `<tr><td><input list="provList" data-prov="${i}" value="${esc(p?p.name:(r.name||""))}" placeholder="Search providers or type a name" aria-label="Provider">${p?`<br><small class="note">${p.group}</small>`:r.name?`<br><small class="note">Other</small>`:""}</td>
   <td><input data-b="${i}" data-k="t" value="${esc(r.t||"")}" placeholder="e.g. 401(k), IRA, HSA"></td>
-  <td>${r.c==="coinbase"?`<span class="no">No option</span>`:`<select data-b="${i}" data-k="n">${["Unsure","Yes","No"].map(v=>`<option ${v===r.n?"selected":""}>${v}</option>`).join("")}</select>`}</td>
+  <td>${none?`<span class="no">No option</span>`:`<select data-b="${i}" data-k="n">${["Unsure","Yes","No"].map(v=>`<option ${v===r.n?"selected":""}>${v}</option>`).join("")}</select>`}</td>
   <td><input type="date" data-b="${i}" data-k="rev" value="${r.rev||""}">${stale?`<br><small class="no">Over 3 years ago</small>`:""}</td>
-  <td>${r.c==="coinbase"?`<small>Coinbase accounts have no beneficiary option. Plan for crypto with a will or trust, or self-custody with multisig or Shamir backup so a trusted person can recover it.</small>`:L[1]?`<a href="${L[1]}" target="_blank" rel="noopener">Update ↗</a>${L[2]?`<br><small class="note">${L[2]}</small>`:""}`:`<small class="note">Check the provider's site after you log in.</small>`}</td>
+  <td>${updCell(r)}</td>
   <td><button class="link" data-del="${i}" aria-label="Remove row">Remove</button></td></tr>`}).join(""):`<tr><td colspan="6" class="note">No accounts yet. Add each account you own.</td></tr>`;
- const need=bene.filter(r=>r.c!=="coinbase"&&r.n!=="Yes").length;$("#beneSum").textContent=bene.length?`${need} of ${bene.length} account${bene.length>1?"s":""} need${need===1?"s":""} attention.`:"";
+ const need=bene.filter(r=>!(provOf(r)?.kind==="none")&&r.n!=="Yes").length;$("#beneSum").textContent=bene.length?`${need} of ${bene.length} account${bene.length>1?"s":""} need${need===1?"s":""} attention.`:"";
  rows.querySelectorAll("[data-b]").forEach(x=>x.onchange=()=>{bene[x.dataset.b][x.dataset.k]=x.value;LS.set("hl_bene",bene);renderBene()});
+ rows.querySelectorAll("[data-prov]").forEach(x=>x.onchange=()=>{const v=x.value.trim(),r=bene[x.dataset.prov];const p=PROVIDERS.find(p=>p.name.toLowerCase()===v.toLowerCase());
+  if(p){r.c=p.id;delete r.name}else{r.c="other";r.name=v}LS.set("hl_bene",bene);renderBene()});
  rows.querySelectorAll("[data-del]").forEach(x=>x.onclick=()=>{bene.splice(x.dataset.del,1);LS.set("hl_bene",bene);renderBene()})}
-$("#beneAdd").onclick=()=>{bene.push({c:"fidelity",t:"",n:"Unsure",rev:""});LS.set("hl_bene",bene);renderBene()};
+document.body.insertAdjacentHTML("beforeend",PROV_LIST);
+$("#beneAdd").onclick=()=>{bene.push({c:"",t:"",n:"Unsure",rev:""});LS.set("hl_bene",bene);renderBene()};
 window.selfShow=t=>{if(t==="s-ret")renderRet();if(t==="s-bene")renderBene();if(t==="s-ucp")renderUCP();if(t==="s-ucp"&&!ctx.last&&!ctx.state)$("#ucpPanel").innerHTML=`<div class="card"><p class="note">Fill in <b>About you</b> first so we can search your names.</p></div>`};
 setMode(MODE);

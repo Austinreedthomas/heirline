@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check every state unclaimed-property URL in data.js.
+"""Check every state unclaimed-property URL in data.js and every provider URL in providers.js.
 
 Usage: python3 scripts/check_links.py [--all]
 Curls each URL (following redirects) and reports non-200 responses, redirects,
@@ -19,6 +19,11 @@ def urls():
     out = [(k, u) for k, u in re.findall(r'\b([A-Z]{2}):\{[^}]*?url:"([^"]+)"', block)]
     mm = re.search(r'const MISSING_MONEY=\{[^}]*url:"([^"]+)"', src)
     if mm: out.append(("MM", mm.group(1)))
+    try:  # beneficiary-checkup providers
+        prov = open("providers.js", encoding="utf-8").read()
+        out += [("p:" + k, u) for k, u in re.findall(r'\["(\w+)","[^"]*","[^"]*","\w+","(https?://[^"]+)"', prov)]
+    except FileNotFoundError:
+        pass
     return out
 
 def check(item):
@@ -47,11 +52,13 @@ def main():
         res = sorted(ex.map(check, urls()))
     bad = 0
     for key, url, code, final, note in res:
+        if code in ("000", "403") and "bot-blocked" not in note:
+            note += "; possibly bot-blocked (no response or 403; check in a real browser)"
         blocked = "bot-blocked" in note
         broken = (code != "200" and not blocked) or "maintenance" in note
         bad += broken
         if note or show_all:
-            print(f"{'BROKEN' if broken else ('BLOCKED' if blocked else ('WARN' if note else 'OK')):7} {key:3} {code:4} {url}" + (f"  -> {note}" if note else ""))
+            print(f"{'BROKEN' if broken else ('BLOCKED' if blocked else ('WARN' if note else 'OK')):7} {key:16} {code:4} {url}" + (f"  -> {note}" if note else ""))
     print(f"\n{len(res)} links checked, {bad} broken.")
     sys.exit(1 if bad else 0)
 

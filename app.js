@@ -87,7 +87,7 @@ $("#searchForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new 
 };
 
 // ---- Document scan ----
-const RULES=[{c:"fidelity",re:/fidelity|netbenefits/i},{c:"vanguard",re:/vanguard/i},{c:"schwab",re:/schwab/i},{c:"empower",re:/empower|great-west/i},{c:"healthequity",re:/healthequity|health\s*equity/i},{c:"coinbase",re:/coinbase/i}];
+const RULES=[{c:"fidelity",re:/fidelity|netbenefits/i},{c:"vanguard",re:/vanguard/i},{c:"schwab",re:/schwab/i},{c:"empower",re:/empower|great-west/i},{c:"healthequity",re:/healthequity|health\s*equity/i},{c:"coinbase",re:/coinbase/i},{c:"principal",re:/principal\s+(?:financial|life|trust|funds|retirement)|principal\.com/i},{c:"voya",re:/\bvoya\b|ing\s+retirement/i},{c:"tiaa",re:/\btiaa\b/i},{c:"transamerica",re:/transamerica/i},{c:"johnhancock",re:/john\s+hancock/i},{c:"merrill",re:/merrill/i},{c:"etrade",re:/e\*?\s?trade/i},{c:"optum",re:/optum/i},{c:"hsabank",re:/hsa\s*bank/i},{c:"kraken",re:/kraken|payward/i},{c:"gemini",re:/gemini\s+(?:trust|exchange)|gemini\.com/i}];
 function guessType(t){if(/5498-SA|health savings|\bHSA\b/i.test(t))return"HSA";if(/roth ira/i.test(t))return"Roth IRA";if(/401\(?k\)?/i.test(t))return"401(k)";
  if(/coinbase|BTC|ETH|USDC/i.test(t))return"Crypto exchange account";if(/\bIRA\b|5498|1099-R/i.test(t))return"IRA";return"Account (type unknown)"}
 const INSURERS=/\b(MetLife|Metropolitan Life|Prudential|New York Life|Northwestern Mutual|MassMutual|Massachusetts Mutual|Lincoln Financial|Lincoln National|Transamerica|Pacific Life|Protective Life|Nationwide|John Hancock|Globe Life|Mutual of Omaha|State Farm|Penn Mutual|Guardian Life|Principal Life|Securian|Brighthouse|Corebridge|American General|Primerica|Allstate|Banner Life|Genworth|Ameritas|Western & Southern|Sammons|Thrivent|USAA Life|Aflac|Unum|OneAmerica)\b/i;
@@ -144,7 +144,7 @@ function renderPlan(){const out=$("#planOut");
  <p class="note">Balance: ${esc(a.bal)} · Source: ${a.src}${a.hint?" · "+esc(a.hint):""}</p>
  <b>Steps</b><ol>${C.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
  <b>Document checklist</b><ul>${C.docs.map((d,j)=>`<li><label style="flex-direction:row;gap:6px"><input type="checkbox" data-doc="${a.id}|${j}" ${tracker[a.id]?.docs?.[j]?"checked":""}> ${d}</label></li>`).join("")}</ul>
- <p><a href="${a.url||C.url}" target="_blank" rel="noopener">Official ${a.c==="ucp"?"state search":C.name} page ↗</a></p>
+ <p><a href="${a.url||C.url}" target="_blank" rel="noopener">${a.c==="ucp"?"Official state search page":C.unverified?C.name+" website (no public death-claim page confirmed)":"Official "+C.name+" page"} ↗</a></p>
  <details><summary>Cover letter</summary><pre id="L${i}">${esc(letter(a))}</pre>
  <button data-copy="${i}">Copy</button><button data-dl="${i}">Download .txt</button></details>
  <button data-rm="${i}">Remove</button></div>`}).join("");
