@@ -13,5 +13,5 @@ ban, get an adapter. Today that is **California** only (records with current bal
 - CA: free weekly CSV, https://www.sco.ca.gov/upd_download_property_records.html (auto-searched)
 - NY: owner-name file only via request form; TX: request by email, license number asked; ND: request by email, fees may apply;
   CO: finder list sold ($305); MI: sold to registered locators, no redistribution; IL: no bulk data or API
-- All other states: official search sites only (no public bulk download found). They get manual search buttons.
+- All other states: official search sites only (no public bulk download found). All 50 states + DC + PR get manual search buttons and a checklist (URLs in `STATE_SITES` in data.js).
 No scheduled refresh workflow: each rebuild adds ~50 MB (compressed) to git history.

@@ -21,7 +21,7 @@
 <label>SSN <small>only the last four digits are used</small><input name="ssn" type="password" inputmode="numeric" maxlength="11" placeholder="•••-••-1234"></label>
 <label>State of death<select name="state"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option><option value="Other">Other</option></select></label>
 <label>Last city <small>optional, narrows CA matches</small><input name="city" placeholder="e.g. Los Angeles"></label>
-<label>Other states they lived in <small>Ctrl/⌘-click or tap to choose several</small><select name="otherStates" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label></div>
+<label>Other states they lived in <small>Type to filter, then pick as many as apply</small><select name="otherStates" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label></div>
 <h4>About you</h4>
 <div class="grid"><label>Your full name<input name="me" placeholder="Daniel Sample"></label>
 <label>Relationship<select name="rel"><option>Child</option><option>Spouse</option><option>Sibling</option><option>Parent</option><option>Other</option></select></label>
@@ -57,7 +57,7 @@
 <section id="s-about" class="tab"><div class="card"><h2>About you</h2><p class="note">We use this only to search public records and fill in letters. It stays in this browser. No SSN needed here.</p>
 <form id="selfForm"><div class="grid"><label>First name<input name="first" required placeholder="Ellen"></label><label>Last name<input name="last" required placeholder="Okafor"></label></div>
 <label>Other or maiden names <small>One per line, e.g. "Ellen Brooks" or just "Brooks"</small><textarea name="aliases" rows="2"></textarea></label>
-<div class="grid"><label>States you've lived in <small>Ctrl/⌘-click or tap to choose several</small><select name="states" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label>
+<div class="grid"><label>States you've lived in <small>Type to filter, then pick as many as apply</small><select name="states" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label>
 <label>Last city you lived in <small>Optional: narrows the automatic search</small><input name="city"></label></div>
 <label>Past employers <small>One per line</small><textarea name="employers" rows="3" placeholder="Acme Logistics&#10;Brightwater Bank"></textarea></label>
 <button class="primary">Save and search</button></form></div></section>
@@ -84,4 +84,4 @@
 <p class="note">Review after marriage, divorce, a birth or a death. A beneficiary form usually overrides your will.</p></div></section>
 </main><footer class="wrap">Heirline prototype · fictional sample data · not legal, tax or financial advice · Contact: <a href="mailto:heirline@mail.grokbot.com">heirline@mail.grokbot.com</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="data.js"></script><script src="app.js"></script><script src="self.js"></script><script src="chat.js"></script></body></html>
+<script src="data.js"></script><script src="states.js"></script><script src="app.js"></script><script src="self.js"></script><script src="chat.js"></script></body></html>

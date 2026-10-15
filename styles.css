@@ -64,3 +64,10 @@ select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-ac
 table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-box{margin-bottom:14px}
 @media(max-width:620px){.modes button{flex:1 1 45%;padding:9px 10px;font-size:14px}}
 @media(max-width:620px){.tbl table.bene{min-width:0}table.bene tr.bh{display:none}table.bene,table.bene tbody,table.bene tr,table.bene td{display:block;width:100%}table.bene tr{padding:12px 0;border-bottom:1px solid var(--line)}table.bene td{border:0;padding:4px 0}table.bene input,table.bene select{width:100%;box-sizing:border-box;min-width:0}}
+.sp-native{display:none!important}.sp{position:relative;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sp:focus-within{border-color:var(--brass,#b08d4a);box-shadow:0 0 0 3px rgba(176,141,74,.18)}
+.sp-chips{display:contents}.sp-chip{display:inline-flex;align-items:center;gap:4px;background:#0f1e3a;color:#f3ead6;border-radius:999px;padding:3px 4px 3px 10px;font-size:13px;font-weight:600}
+.sp-chip button{background:transparent;border:0;color:#c9b07a;font-size:16px;line-height:1;cursor:pointer;padding:0 5px}
+.sp-in{flex:1 1 140px;border:0!important;outline:0;box-shadow:none!important;padding:6px!important;min-width:120px;background:transparent}
+.sp-list{position:absolute;z-index:20;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow:auto;box-shadow:0 10px 30px rgba(15,30,58,.15)}
+.sp-list li{padding:7px 10px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:400}.sp-list li.hi,.sp-list li:hover{background:#f6f1e7}.sp-none{color:#888;cursor:default}

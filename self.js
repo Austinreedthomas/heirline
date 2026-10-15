@@ -17,11 +17,13 @@ function setMode(m){MODE=m;LS.set("hl_mode",m);ctx=LS.get(CTXK(),{});document.bo
  $(".hero h1").textContent=HERO[m][0];$(".hero h1+p").textContent=HERO[m][1];
  $("nav.steps").innerHTML=m==="self"?SELF_NAV:LOSS_NAV;
  const panel=$("#ucpPanel");(m==="self"?$("#s-ucpHost"):$("#results")).after(panel);
- if(m==="self")fillAbout();renderUCP();show(m==="self"?"s-about":"search")}
+ if(m==="self")fillAbout();else fillLoss();renderUCP();show(m==="self"?"s-about":"search")}
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 function fillAbout(){const f=$("#selfForm");if(!f||!ctx.last)return;f.first.value=ctx.first||"";f.last.value=ctx.last||"";
  f.aliases.value=(ctx.aliases||[]).map(a=>a.first+" "+a.last).join("\n");f.city.value=ctx.city||"";f.employers.value=(ctx.employers||[]).join("\n");
- [...f.states.options].forEach(o=>o.selected=[ctx.state,...(ctx.otherStates||[])].includes(o.value))}
+ [...f.states.options].forEach(o=>o.selected=[ctx.state,...(ctx.otherStates||[])].includes(o.value));f.states.refreshPicker?.()}
+function fillLoss(){const f=$("#searchForm");if(!f||!ctx.last)return;for(const k of ["first","last","dob","dod","city","me","rel","role"])if(f[k]&&ctx[k]!=null&&!f[k].value)f[k].value=ctx[k];
+ if(STATE_SITES[ctx.state]||ctx.state==="Other")f.state.value=ctx.state;[...f.otherStates.options].forEach(o=>o.selected=(ctx.otherStates||[]).includes(o.value));f.otherStates.refreshPicker?.()}
 $("#selfForm").onsubmit=e=>{e.preventDefault();const f=e.target;const states=[...f.states.selectedOptions].map(o=>o.value);
  const aliases=f.aliases.value.split(/\n|;/).map(s=>s.trim()).filter(Boolean).map(s=>{const p=s.split(/\s+/);return p.length>1?{first:p.slice(0,-1).join(" "),last:p.at(-1)}:{first:f.first.value.trim(),last:p[0]}});
  ctx={first:f.first.value.trim(),last:f.last.value.trim(),aliases,state:states[0]||"Other",otherStates:states.slice(1),city:f.city.value.trim(),
