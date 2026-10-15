@@ -5,9 +5,9 @@ let found=LS.get("hl_found",[]), ctx=LS.get("hl_ctx",{}), tracker=LS.get("hl_tra
 const save=()=>{LS.set("hl_found",found);LS.set("hl_ctx",ctx);LS.set("hl_tracker",tracker)};
 
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.tab));
-function show(t){const order=["search","scan","plan","track"],k=order.indexOf(t);document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("done",i<k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+function show(t){const order=["search","scan","life","plan","track"],k=order.indexOf(t);document.querySelectorAll("nav button").forEach((b,i)=>b.classList.toggle("done",i<k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
  document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("active",s.id===t));
- if(t==="plan")renderPlan(); if(t==="track")renderTracker(); window.scrollTo(0,0)}
+ if(t==="plan")renderPlan(); if(t==="life")renderLife(); if(t==="track")renderTracker(); window.scrollTo(0,0)}
 
 function addAccount(a){const id=a.c+"|"+a.type.toLowerCase(); const t=a.type.toLowerCase();
  const dup=f=>f.id===id||(f.c===a.c&&a.src==="document"&&(t==="ira"&&/ira/i.test(f.type)||f.type.toLowerCase().includes(t)||t.includes(f.type.toLowerCase())));
@@ -87,7 +87,11 @@ $("#searchForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new 
 const RULES=[{c:"fidelity",re:/fidelity|netbenefits/i},{c:"vanguard",re:/vanguard/i},{c:"schwab",re:/schwab/i},{c:"empower",re:/empower|great-west/i},{c:"healthequity",re:/healthequity|health\s*equity/i},{c:"coinbase",re:/coinbase/i}];
 function guessType(t){if(/5498-SA|health savings|\bHSA\b/i.test(t))return"HSA";if(/roth ira/i.test(t))return"Roth IRA";if(/401\(?k\)?/i.test(t))return"401(k)";
  if(/coinbase|BTC|ETH|USDC/i.test(t))return"Crypto exchange account";if(/\bIRA\b|5498|1099-R/i.test(t))return"IRA";return"Account (type unknown)"}
+const INSURERS=/\b(MetLife|Metropolitan Life|Prudential|New York Life|Northwestern Mutual|MassMutual|Massachusetts Mutual|Lincoln Financial|Lincoln National|Transamerica|Pacific Life|Protective Life|Nationwide|John Hancock|Globe Life|Mutual of Omaha|State Farm|Penn Mutual|Guardian Life|Principal Life|Securian|Brighthouse|Corebridge|American General|Primerica|Allstate|Banner Life|Genworth|Ameritas|Western & Southern|Sammons|Thrivent|USAA Life|Aflac|Unum|OneAmerica)\b/i;
+const LIFE_WORDS=/life insurance|term life|whole life|universal life|premium (notice|due|paid)|death benefit|policy (number|no\.?)/i;
 function scanText(name,text){const hits=[];
+ const ins=(text.match(INSURERS)||[])[1];if(ins||LIFE_WORDS.test(text)&&!RULES.some(r=>r.re.test(text))){const pol=(text.match(/policy\s*(?:number|no\.?|#)\s*[:#]?\s*([A-Z0-9-]*\d[A-Z0-9-]*)/i)||[])[1];
+  hits.push({c:"lifeins",type:"Life insurance"+(ins?" · "+ins:" (insurer unknown)"),hint:[/premium/i.test(text)&&"premium notice",pol&&"policy ending "+pol.slice(-4)].filter(Boolean).join(", ")})}
  for(const r of RULES)if(r.re.test(text)){const type=guessType(text);const acct=(text.match(/account\s*(?:number|id)\s*[:#]?\s*([A-Z0-9-]*\d[A-Z0-9-]*)/i)||[])[1];
   const form=(text.match(/FORM\s+(1099-R|5498-SA|5498)/i)||[])[1];
   hits.push({c:r.c,type,hint:[form&&"Form "+form,acct&&"acct ending "+acct.slice(-4)].filter(Boolean).join(", ")})}
@@ -100,7 +104,7 @@ async function readFile(f){
  if(f.type.startsWith("image/"))return f.name; // no OCR in prototype: filename only
  return await f.text()}
 function showScan(results){let added=0;
- $("#scanOut").innerHTML=results.map(r=>`<div class="card"><b>${esc(r.name)}</b>${r.image?' <span class="tag">image: filename only, no OCR yet</span>':""}<br>${r.hits.length?r.hits.map(h=>{if(addAccount({c:h.c,type:h.type,bal:"Unknown (from document)",src:"document",hint:h.hint}))added++;
+ $("#scanOut").innerHTML=results.map(r=>`<div class="card"><b>${esc(r.name)}</b>${r.image?' <span class="tag">image: filename only, no OCR yet</span>':""}<br>${r.hits.length?r.hits.map(h=>{if(addAccount({c:h.c,type:h.type,bal:h.c==="lifeins"?"Death benefit unknown":"Unknown (from document)",src:"document",hint:h.hint}))added++;
   return `<span class="tag">${CUSTODIANS[h.c].name}</span> ${esc(h.type)} ${h.hint?"· "+esc(h.hint):""}`}).join("<br>"):"<span class='no'>No custodian found</span>"}</div>`).join("")+
   `<p><b>${added} new account(s) added to your claim plan</b> (${results.reduce((n,r)=>n+r.hits.length,0)-added} matched accounts already in it). <button class="primary" onclick="show('plan')">View claim plan</button></p>`}
 $("#files").onchange=async e=>{const res=[];for(const f of e.target.files){try{res.push({...scanText(f.name,await readFile(f)),image:f.type.startsWith("image/")})}catch(err){res.push({name:f.name+" (could not read: "+err.message+")",hits:[]})}}showScan(res)};
@@ -146,7 +150,7 @@ function renderPlan(){const out=$("#planOut");
  out.querySelectorAll("[data-dl]").forEach(b=>b.onclick=()=>{const a=found[b.dataset.dl];const blob=new Blob([letter(a)],{type:"text/plain"});const u=URL.createObjectURL(blob);
   const l=document.createElement("a");l.href=u;l.download=`Heirline_${a.c}_cover_letter.txt`;l.click();URL.revokeObjectURL(u)});
  out.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{found.splice(+b.dataset.rm,1);save();renderPlan()});
- $("#clearAll").onclick=()=>{if(confirm("Clear all accounts and tracker?")){found=[];tracker={};ucp={};LS.set("hl_ucp",ucp);save();renderUCP();renderPlan()}};
+ $("#clearAll").onclick=()=>{if(confirm("Clear all accounts and tracker?")){found=[];tracker={};ucp={};lifeChk={};LS.set("hl_ucp",ucp);LS.set("hl_life",lifeChk);save();renderUCP();renderLife();renderPlan()}};
 }
 
 // ---- Tracker ----
@@ -163,3 +167,15 @@ function renderTracker(){const out=$("#trackOut");
  out.querySelectorAll("[data-f]").forEach(el=>el.onchange=()=>{const t=tracker[el.dataset.id]??={};t[el.dataset.f]=el.value;save();if(el.dataset.f!=="notes")renderTracker()});
 }
 renderUCP();
+// ---- Life insurance step ----
+let lifeChk=LS.get("hl_life",{});
+function addLifeTrack(id,label,notes,days){if(!found.some(f=>f.id===id)){found.push({id,c:"lifeins",type:label,bal:"Unknown until an insurer responds",src:"life insurance search",url:id==="life|mib"?"https://mib.com/pls.html":"https://eapps.naic.org/life-policy-locator/"});}
+ const fu=new Date(Date.now()+days*864e5).toISOString().slice(0,10);tracker[id]={...(tracker[id]||{}),status:"Submitted",notes,follow:tracker[id]?.follow||fu};save();renderLife()}
+function renderLife(){const el=$("#lifeClues");if(!el)return;
+ el.innerHTML=LIFE_CLUES.map((c,i)=>`<label class="clue"><input type="checkbox" data-clue="${i}" ${lifeChk[i]?"checked":""}> ${c}</label>`).join("");
+ el.querySelectorAll("[data-clue]").forEach(cb=>cb.onchange=()=>{lifeChk[cb.dataset.clue]=cb.checked;LS.set("hl_life",lifeChk)});
+ const n=tracker["life|naic"];$("#naicNote").textContent=n?`In your tracker · follow up by ${n.follow}`:"";$("#naicDone").disabled=!!n;$("#naicDone").textContent=n?"NAIC request in tracker":"Mark NAIC request submitted";
+ const m=tracker["life|mib"];$("#mibDone").disabled=!!m;$("#mibDone").textContent=m?"MIB request in tracker":"Mark MIB request sent"}
+$("#naicDone").onclick=()=>addLifeTrack("life|naic","NAIC request submitted","NAIC Life Insurance Policy Locator request. Insurers contact you directly only if a policy is found; allow up to 90 business days.",126);
+$("#mibDone").onclick=()=>addLifeTrack("life|mib","MIB Policy Locator request sent","MIB mails a report within 21 business days of receiving a complete application.",30);
+renderLife();

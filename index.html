@@ -7,9 +7,9 @@
 <div><div class="name">Heirline</div><div class="tagline">Estate account recovery</div></div></div>
 <div class="toplinks"><a href="about.html" class="navlink">About</a><div class="proto"><span class="dot"></span>Prototype · sample data only</div></div></div>
 <div class="wrap hero"><h1>Find and claim what your loved one left behind.</h1>
-<p>A calm, guided path through retirement, HSA and crypto accounts, one custodian at a time.</p>
+<p>A calm, guided path through retirement, HSA, life insurance and crypto accounts, one custodian at a time.</p>
 <p class="trust"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> Private by design: everything stays in this browser. No real SSNs, please.</p></div>
-<nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="plan"><span>3</span>Claim plan</button><button data-tab="track"><span>4</span>Tracker</button></nav></header>
+<nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="life"><span>3</span>Life insurance</button><button data-tab="plan"><span>4</span>Claim plan</button><button data-tab="track"><span>5</span>Tracker</button></nav></header>
 <main class="wrap">
 <section id="search" class="tab active"><div class="card"><h2>Search the custodian network</h2>
 <p class="hint">Try the sample: <b>Margaret Sample</b>, born 1948-03-12, SSN last four <b>4821</b>, Florida, your name <b>Daniel Sample</b>. For live California records, try <b>Maria Garcia</b>, state of death <b>CA</b>, city <b>Los Angeles</b>.</p>
@@ -33,6 +33,23 @@
 <p>Tax forms such as 1099-R, 5498 and 5498-SA, and account statements, often reveal accounts the family didn't know about. Text and PDF files are read in your browser and never uploaded.</p>
 <div class="drop"><input type="file" id="files" multiple accept=".pdf,.txt,image/*"><button id="sampleDocs" class="primary">Use sample documents</button></div>
 <div id="scanOut"></div></div></section>
+<section id="life" class="tab"><div class="card"><h2>Find life insurance policies</h2>
+<p class="lead">Life insurance often goes unclaimed because no one knows the policy exists. Two locator services and a few clues can help.</p>
+<div class="ca-box"><div class="ca-head"><h3 style="margin:0">NAIC Life Insurance Policy Locator</h3><span class="tag gold">Free</span></div>
+<p>Run by the National Association of Insurance Commissioners. If you're a <b>beneficiary, executor or legal representative</b>, you submit one request with details from the death certificate: legal name, dates of birth and death, SSN or ITIN, veteran status, and your relationship. Participating life insurers and annuity companies search their records.</p>
+<ul><li>If a policy is found and you're the beneficiary or authorized to receive information, the <b>insurer contacts you directly</b>.</li>
+<li>If nothing is found, or you're not the beneficiary, <b>you won't hear back</b>. Not every insurer participates, so silence doesn't prove there's no policy.</li>
+<li>It can take <b>up to 90 business days</b>. It only works for people who have died.</li></ul>
+<p><a class="btn" href="https://eapps.naic.org/life-policy-locator/" target="_blank" rel="noopener">Open the NAIC locator ↗</a> <a href="https://content.naic.org/article/learn_how_use_naic_life_insurance_policy_locator.htm" target="_blank" rel="noopener">How it works (NAIC)</a></p>
+<button class="primary" id="naicDone">Mark NAIC request submitted</button> <span class="note" id="naicNote"></span></div>
+<div class="ca-box"><div class="ca-head"><h3 style="margin:0">MIB Policy Locator Service</h3><span class="tag">$75, paid</span></div>
+<p>MIB searches its database of life insurance <b>applications</b> made since 1996 at member insurers. A report naming the insurers and their contact details is mailed within 21 business days. It shows applications, <b>not</b> whether a policy was issued or is still in force, and it doesn't cover most employer group policies. It needs a notarized form, an original death certificate (returned to you) and a $75 money order or certified check, non-refundable.</p>
+<p><a href="https://mib.com/pls.html" target="_blank" rel="noopener">MIB Policy Locator Service ↗</a> <button id="mibDone">Mark MIB request sent</button></p></div>
+<div class="ca-box"><h3 style="margin:0 0 6px">Veterans and service members</h3>
+<p>VA life insurance claims use VA Form 29-4125e with the death certificate. VGLI claims use form SGLV 8283, sent to Prudential's Office of Servicemembers' Group Life Insurance (OSGLI). If no beneficiary was named, SGLI and VGLI pay in a set order: spouse, then children, parents, the estate's executor, then other next of kin.</p>
+<p><a href="https://www.benefits.va.gov/INSURANCE/file_death_claim.asp" target="_blank" rel="noopener">How to file a VA insurance death claim ↗</a></p></div></div>
+<div class="card"><h3>Clues to look for</h3><p class="note">Tick each one as you check it. Saved in this browser.</p><div id="lifeClues"></div>
+<p class="note">Found a policy? Scan the document in <b>Documents</b> to add it to your claim plan, or note the insurer in the tracker.</p></div></section>
 <section id="plan" class="tab"><div id="planOut"></div></section>
 <section id="track" class="tab"><div id="trackOut"></div></section>
 </main><footer class="wrap">Heirline prototype · fictional sample data · not legal, tax or financial advice · Contact: <a href="mailto:heirline@mail.grokbot.com">heirline@mail.grokbot.com</a></footer>

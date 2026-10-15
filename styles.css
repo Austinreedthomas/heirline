@@ -55,3 +55,5 @@ select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-ac
 @media(max-width:620px){.toplinks{gap:10px}.stat .big{font-size:44px}}
 .auto-toggle{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:14px 0 4px;padding:12px 14px;border-radius:10px;background:#f6f1e7}
 .sw{flex-direction:row;align-items:center;gap:8px;font-weight:600}.sw input{width:18px;height:18px;accent-color:var(--ink)}
+.clue{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}.clue input{margin-top:3px;width:17px;height:17px;accent-color:var(--ink)}
+#life .ca-box{margin-bottom:14px}@media(max-width:620px){.steps button{min-width:calc(33% - 6px)}}
