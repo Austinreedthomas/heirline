@@ -10,7 +10,7 @@
 <p>A calm, guided path through retirement, HSA, life insurance and crypto accounts, one custodian at a time.</p>
 <p class="trust"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> Private by design: everything stays in this browser. No real SSNs, please.</p></div>
 <div class="wrap modes" role="radiogroup" aria-label="What brings you here?"><span class="modes-q">What brings you here?</span><button type="button" role="radio" data-mode="loss">A loved one passed away</button><button type="button" role="radio" data-mode="self">Find my own money</button></div>
-<nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="life"><span>3</span>Life insurance</button><button data-tab="plan"><span>4</span>Claim plan</button><button data-tab="track"><span>5</span>Tracker</button></nav></header>
+<nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="life"><span>3</span>Life insurance</button><button data-tab="crypto"><span>4</span>Crypto</button><button data-tab="plan"><span>5</span>Claim plan</button><button data-tab="track"><span>6</span>Tracker</button></nav></header>
 <main class="wrap">
 <section id="search" class="tab active"><div class="card"><h2>Search the custodian network</h2>
 <p class="hint">Try the sample: <b>Margaret Sample</b>, born 1948-03-12, SSN last four <b>4821</b>, Florida, your name <b>Daniel Sample</b>. For live California records, try <b>Maria Garcia</b>, state of death <b>CA</b>, city <b>Los Angeles</b>.</p>
@@ -51,6 +51,7 @@
 <p><a href="https://www.benefits.va.gov/INSURANCE/file_death_claim.asp" target="_blank" rel="noopener">How to file a VA insurance death claim ↗</a></p></div></div>
 <div class="card"><h3>Clues to look for</h3><p class="note">Tick each one as you check it. Saved in this browser.</p><div id="lifeClues"></div>
 <p class="note">Found a policy? Scan the document in <b>Documents</b> to add it to your claim plan, or note the insurer in the tracker.</p></div></section>
+<section id="crypto" class="tab"><div id="cryptoOut"></div></section>
 <section id="plan" class="tab"><div id="planOut"></div></section>
 <section id="track" class="tab"><div id="trackOut"></div></section>
 
@@ -78,10 +79,11 @@
 <div class="ca-box"><h4>IRS refunds</h4><p class="note">Use Where's My Refund to check a recent return or start a trace for a lost check. If you never filed for a year you were owed a refund, you generally have three years to claim it. For a missing check, the IRS line is 800-829-1954.</p>
 <a class="btn" href="https://www.irs.gov/refunds" target="_blank" rel="noopener">Where's My Refund ↗</a> <a class="btn" href="https://www.usa.gov/unclaimed-tax-refunds" target="_blank" rel="noopener">Unclaimed tax refunds ↗</a></div>
 <p class="note">Think you're the beneficiary of someone else's life insurance? The <a href="https://eapps.naic.org/life-policy-locator/" target="_blank" rel="noopener">NAIC Life Insurance Policy Locator</a> searches on behalf of beneficiaries of a person who has died.</p></div></section>
+<section id="s-crypto" class="tab"><div id="vaultOut"></div></section>
 <section id="s-bene" class="tab"><div class="card"><h2>Beneficiary checkup</h2><p class="note">Accounts with a named beneficiary pass directly and quickly. Accounts without one can end up in probate. List what you own and check each one. <b id="beneSum"></b></p>
 <div class="tbl"><table class="bene"><tr class="bh"><th>Provider</th><th>Account</th><th>Beneficiary named?</th><th>Last reviewed</th><th>Update</th><th></th></tr><tbody id="beneRows"></tbody></table></div>
 <button class="small" id="beneAdd">+ Add account</button>
 <p class="note">Review after marriage, divorce, a birth or a death. A beneficiary form usually overrides your will.</p></div></section>
 </main><footer class="wrap">Heirline prototype · fictional sample data · not legal, tax or financial advice · Contact: <a href="mailto:heirline@mail.grokbot.com">heirline@mail.grokbot.com</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="data.js"></script><script src="providers.js"></script><script src="states.js"></script><script src="app.js"></script><script src="self.js"></script><script src="chat.js"></script></body></html>
+<script src="data.js"></script><script src="providers.js"></script><script src="states.js"></script><script src="app.js"></script><script src="self.js"></script><script src="bip39.js"></script><script src="crypto.js"></script><script src="chat.js"></script></body></html>

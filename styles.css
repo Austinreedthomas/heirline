@@ -75,3 +75,8 @@ table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-b
 table.bene{table-layout:fixed}table.bene td{vertical-align:top}table.bene input,table.bene select{width:100%;min-width:0;box-sizing:border-box}
 table.bene th:nth-child(1){width:24%}table.bene th:nth-child(2){width:14%}table.bene th:nth-child(3){width:12%}table.bene th:nth-child(4){width:15%}table.bene th:nth-child(5){width:27%}table.bene th:nth-child(6){width:8%}
 @media(max-width:620px){table.bene{table-layout:auto}}
+.warn{background:#fbf3e4;border:1px solid var(--gold,#b08d57);border-left:4px solid #9a3b2e;border-radius:10px;padding:12px 14px;margin:12px 0;font-size:14px}
+.cx-add{display:flex;flex-wrap:wrap;gap:8px}.cx-add button{margin:0}.xgrid{display:grid;gap:10px}.xplan summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:8px}.xplan summary small{flex-basis:100%;margin:0}
+code{background:#f3efe7;padding:1px 5px;border-radius:4px;font-size:.92em}input.bad,textarea.bad{border-color:#9a3b2e}
+table.vt input,table.vt select{width:100%;margin:0}
+@media(max-width:620px){table.vt tr:first-child{display:none}table.vt,table.vt tbody,table.vt tr,table.vt td{display:block;width:100%}table.vt tr{padding:10px 0;border-bottom:1px solid var(--line)}table.vt td{border:0;padding:3px 0}}

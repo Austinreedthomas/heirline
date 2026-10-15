@@ -24,6 +24,12 @@ def urls():
         out += [("p:" + k, u) for k, u in re.findall(r'\["(\w+)","[^"]*","[^"]*","\w+","(https?://[^"]+)"', prov)]
     except FileNotFoundError:
         pass
+    try:  # crypto exchange claim plans
+        cj = open("crypto.js", encoding="utf-8").read()
+        out += [("x:" + k, u) for k, u in re.findall(r'\b(\w+):\{name:"[^"]*",url:"(https?://[^"]+)"', cj)]
+        out += [("x:link", u) for u in re.findall(r'href="(https://[^"$]+)"', cj)]
+    except FileNotFoundError:
+        pass
     return out
 
 def check(item):

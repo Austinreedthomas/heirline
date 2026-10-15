@@ -1,7 +1,7 @@
 // ---- "Find my own money" mode ----
 {const S={steps:["Contact them and ask whether they hold money for you.","Ask for the claim or distribution forms.","Return them with ID."],docs:["Photo ID","Proof of address history (if asked)"]};Object.assign(CUSTODIANS,{emp:{name:"Former employer plan",...S},dol:{name:"DOL Retirement Savings Lost and Found",url:"https://lostandfound.dol.gov/",...S},pbgc:{name:"PBGC unclaimed pensions",url:"https://www.pbgc.gov/workers-retirees/find-unclaimed-retirement-benefits/search-unclaimed",...S},other:{name:"Other source",...S}})}
 const LOSS_NAV=$("nav.steps").innerHTML;
-const SELF_NAV=["s-about|About you","s-ucp|Unclaimed property","s-ret|Retirement","s-other|Other places","s-bene|Beneficiary checkup","track|Tracker"].map((x,i)=>{const [t,l]=x.split("|");return `<button data-tab="${t}"><span>${i+1}</span>${l}</button>`}).join("");
+const SELF_NAV=["s-about|About you","s-ucp|Unclaimed property","s-ret|Retirement","s-other|Other places","s-bene|Beneficiary checkup","s-crypto|Crypto vault","track|Tracker"].map((x,i)=>{const [t,l]=x.split("|");return `<button data-tab="${t}"><span>${i+1}</span>${l}</button>`}).join("");
 const HERO={loss:["Find and claim what your loved one left behind.","A calm, guided path through retirement, HSA, life insurance and crypto accounts, one custodian at a time."],
  self:["Find money that's already yours.","Old 401(k)s, forgotten pensions, uncashed checks and stray accounts, plus a checkup so your own family never has to search."]};
 let emp=LS.get("hl_emp",{}),bene=LS.get("hl_bene",[]);
