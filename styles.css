@@ -48,3 +48,8 @@ button.link{border:0;background:none;padding:0;margin:0 4px;color:var(--gold);te
 select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-act select{flex:1}}
 .ca-box{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fdfbf7}.ca-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline}
 .tbl{overflow-x:auto}.tbl table{min-width:640px}button.small{padding:6px 10px;font-size:12px;margin:0}button:disabled{opacity:.55;cursor:default}
+.toplinks{display:flex;align-items:center;gap:16px}.navlink{color:#e9e4da;text-decoration:none;font-size:14px;font-weight:500;border-bottom:1px solid transparent;transition:all .2s}.navlink:hover,.navlink.on{color:var(--gold2);border-color:var(--gold2)}
+.brand-link{text-decoration:none}.lead{font-size:17px;color:var(--text)}.stat{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.stat .big{font-family:"Cormorant Garamond",serif;font-size:56px;color:var(--gold);line-height:1;font-weight:600}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:0 0 18px}.features .card{margin:0}.features h3{font-size:20px}.features .num{font:600 12px Inter;color:var(--gold);letter-spacing:1.2px}
+.card.dark{background:linear-gradient(160deg,var(--ink),var(--ink2));color:#d7dbe2;border:0}.card.dark h2{color:#fff}.card.dark a{color:var(--gold2)}
+@media(max-width:620px){.toplinks{gap:10px}.stat .big{font-size:44px}}
