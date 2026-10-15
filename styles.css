@@ -71,3 +71,4 @@ table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-b
 .sp-in{flex:1 1 140px;border:0!important;outline:0;box-shadow:none!important;padding:6px!important;min-width:120px;background:transparent}
 .sp-list{position:absolute;z-index:20;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow:auto;box-shadow:0 10px 30px rgba(15,30,58,.15)}
 .sp-list li{padding:7px 10px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:400}.sp-list li.hi,.sp-list li:hover{background:#f6f1e7}.sp-none{color:#888;cursor:default}
+.rec-sum{display:block;margin-top:6px;color:#8a6d2f;font-weight:600;font-size:12.5px}.rec-sum:empty{display:none}

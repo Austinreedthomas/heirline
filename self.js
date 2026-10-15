@@ -17,7 +17,7 @@ function setMode(m){MODE=m;LS.set("hl_mode",m);ctx=LS.get(CTXK(),{});document.bo
  $(".hero h1").textContent=HERO[m][0];$(".hero h1+p").textContent=HERO[m][1];
  $("nav.steps").innerHTML=m==="self"?SELF_NAV:LOSS_NAV;
  const panel=$("#ucpPanel");(m==="self"?$("#s-ucpHost"):$("#results")).after(panel);
- if(m==="self")fillAbout();else fillLoss();renderUCP();show(m==="self"?"s-about":"search")}
+ if(m==="self")fillAbout();else fillLoss();renderUCP();if(window.recSummary)recSummary();show(m==="self"?"s-about":"search")}
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 function fillAbout(){const f=$("#selfForm");if(!f||!ctx.last)return;f.first.value=ctx.first||"";f.last.value=ctx.last||"";
  f.aliases.value=(ctx.aliases||[]).map(a=>a.first+" "+a.last).join("\n");f.city.value=ctx.city||"";f.employers.value=(ctx.employers||[]).join("\n");
@@ -56,5 +56,5 @@ function renderBene(){const rows=$("#beneRows");
  rows.querySelectorAll("[data-b]").forEach(x=>x.onchange=()=>{bene[x.dataset.b][x.dataset.k]=x.value;LS.set("hl_bene",bene);renderBene()});
  rows.querySelectorAll("[data-del]").forEach(x=>x.onclick=()=>{bene.splice(x.dataset.del,1);LS.set("hl_bene",bene);renderBene()})}
 $("#beneAdd").onclick=()=>{bene.push({c:"fidelity",t:"",n:"Unsure",rev:""});LS.set("hl_bene",bene);renderBene()};
-window.selfShow=t=>{if(t==="s-ret")renderRet();if(t==="s-bene")renderBene();if(t==="s-ucp"&&!ctx.last)$("#ucpPanel").innerHTML=`<div class="card"><p class="note">Fill in <b>About you</b> first so we can search your names.</p></div>`};
+window.selfShow=t=>{if(t==="s-ret")renderRet();if(t==="s-bene")renderBene();if(t==="s-ucp")renderUCP();if(t==="s-ucp"&&!ctx.last&&!ctx.state)$("#ucpPanel").innerHTML=`<div class="card"><p class="note">Fill in <b>About you</b> first so we can search your names.</p></div>`};
 setMode(MODE);

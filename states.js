@@ -14,8 +14,8 @@
   const pick=v=>{const o=[...sel.options].find(o=>o.value===v);if(o){o.selected=true;sel.dispatchEvent(new Event("change"))}inp.value="";hi=0;draw();close();inp.focus()};
   inp.oninput=()=>{hi=0;open()};inp.onfocus=open;inp.onclick=open;inp.onblur=()=>setTimeout(close,150);
   inp.onkeydown=e=>{const it=items();if(e.key==="ArrowDown"){hi=Math.min(hi+1,it.length-1);open();e.preventDefault()}else if(e.key==="ArrowUp"){hi=Math.max(hi-1,0);open();e.preventDefault()}
-   else if(e.key==="Enter"){e.preventDefault();if(it[hi])pick(it[hi].value)}else if(e.key==="Backspace"&&!inp.value){const s=[...sel.selectedOptions].pop();if(s){s.selected=false;draw()}}else if(e.key==="Escape")close()};
+   else if(e.key==="Enter"){e.preventDefault();if(it[hi])pick(it[hi].value)}else if(e.key==="Backspace"&&!inp.value){const s=[...sel.selectedOptions].pop();if(s){s.selected=false;draw();sel.dispatchEvent(new Event("change"))}}else if(e.key==="Escape")close()};
   ul.onmousedown=e=>{const li=e.target.closest("li[data-v]");if(li){e.preventDefault();pick(li.dataset.v)}};
-  chips.onclick=e=>{const v=e.target.dataset.x;if(v){[...sel.options].find(o=>o.value===v).selected=false;draw()}};
+  chips.onclick=e=>{const v=e.target.dataset.x;if(v){[...sel.options].find(o=>o.value===v).selected=false;draw();sel.dispatchEvent(new Event("change"))}};
   sel.refreshPicker=draw;draw()}
 })();

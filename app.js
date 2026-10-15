@@ -17,22 +17,23 @@ function addAccount(a){const id=a.c+"|"+a.type.toLowerCase(); const t=a.type.toL
 
 let ucp=LS.get("hl_ucp",{});
 const UCP_LABEL={"":"Not checked yet",checked:"Checked","none":"Nothing found",found:"Found property"};
-function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last){el.innerHTML="";return}
+function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last&&!ctx.state&&!(ctx.otherStates||[]).length){el.innerHTML="";return}
  const states=[...new Set([ctx.state,...(ctx.otherStates||[])])].filter(s=>STATE_SITES[s]);
  const allNames=[{first:ctx.first,last:ctx.last},...(ctx.aliases||[])].filter(n=>n.last);const name=allNames.map(n=>`${n.last}, ${n.first}`).join("; ");
- const row=(key,S)=>{const st=ucp[UK(key)]||"";return `<div class="ucp-row"><div class="ucp-info"><b>${S.site}</b><span>${key==="MM"?S.name:S.name+" · official state site"}</span></div>
+ const death=MODE!=="self"&&STATE_SITES[ctx.state]?ctx.state:null;
+ const row=(key,S)=>{const st=ucp[UK(key)]||"";return `<div class="ucp-row"><div class="ucp-info"><b>${S.site}</b><span>${key==="MM"?S.name:(key===death?'<span class="tag gold">State of death</span> ':"")+S.name+" · official state site"}</span></div>
   <div class="ucp-act"><a class="btn" href="${S.url}" target="_blank" rel="noopener">Search ↗</a>
   <select data-ucp="${key}" aria-label="Result for ${S.site}">${Object.entries(UCP_LABEL).map(([v,l])=>`<option value="${v}" ${v===st?"selected":""}>${l}</option>`).join("")}</select></div></div>`};
  el.innerHTML=`<div class="card ucp"><div class="ucp-head"><h3>Unclaimed property</h3><span class="tag gold">${states.length+1} place${states.length?"s":""} to check</span></div>
- <p class="note">States hold forgotten balances, uncashed checks and old accounts. Search the name <b>${esc(name)}</b> <button type="button" class="link" id="copyName">Copy name</button>
+ <p class="note">States hold forgotten balances, uncashed checks and old accounts. Search the name <b>${esc(name)||"(add a name above)"}</b> <button type="button" class="link" id="copyName">Copy name</button>
  The official sites don't accept a pre-filled name in the link (they use a bot check), so each button opens the search page and you paste the name.</p>
- ${row("MM",MISSING_MONEY)}${states.map(s=>row(s,STATE_SITES[s])).join("")}
+ ${states.map(s=>row(s,STATE_SITES[s])).join("")}${row("MM",MISSING_MONEY)}
  <div class="auto-toggle"><label class="sw"><input type="checkbox" id="searchAll" ${ctx.searchAll!==false?"checked":""}> Search all covered states</label><span class="note" id="coverNote">Automatic search uses states that publish open data.</span></div>
  <div id="autoMatches"></div>
  ${ctx.state==="Other"?`<p class="note">State not listed? Use <a href="https://unclaimed.org/search-property/" target="_blank" rel="noopener">NAUPA's directory of every state's site</a>.</p>`:""}
  <p class="note">Marking a result "Found property" adds it to your claim plan and tracker.</p></div>`;
  $("#copyName").onclick=async e=>{try{await navigator.clipboard.writeText(name);e.target.textContent="Copied"}catch{prompt("Copy:",name)}};
- $("#searchAll").onchange=e=>{ctx.searchAll=e.target.checked;save();searchAuto(states)};searchAuto(states);
+ $("#searchAll").onchange=e=>{ctx.searchAll=e.target.checked;save();searchAuto(states)};if(ctx.last)searchAuto(states);else $("#autoMatches").innerHTML=`<p class="note">Add a last name to run the automatic search.</p>`;
  el.querySelectorAll("[data-ucp]").forEach(s=>s.onchange=()=>{const k=s.dataset.ucp;ucp[UK(k)]=s.value;LS.set("hl_ucp",ucp);
   const S=k==="MM"?MISSING_MONEY:STATE_SITES[k];const id="ucp|"+UK(k);
   if(s.value==="found"){if(!found.some(f=>f.id===id)){found.push({id,c:"ucp",type:"Unclaimed property · "+S.name,bal:"Shown on state site",src:"unclaimed-property search",url:S.url});
@@ -181,3 +182,14 @@ function renderLife(){const el=$("#lifeClues");if(!el)return;
 $("#naicDone").onclick=()=>addLifeTrack("life|naic","NAIC request submitted","NAIC Life Insurance Policy Locator request. Insurers contact you directly only if a policy is found; allow up to 90 business days.",126);
 $("#mibDone").onclick=()=>addLifeTrack("life|mib","MIB Policy Locator request sent","MIB mails a report within 21 business days of receiving a complete application.",30);
 renderLife();
+
+// ---- Live updates: panel follows the state selectors (debounced) ----
+let liveT;function liveStates(form){clearTimeout(liveT);liveT=setTimeout(()=>{const f=form,self=f.id==="selfForm";if(self!==(MODE==="self"))return;
+ const multi=self?f.states:f.otherStates,picked=[...multi.selectedOptions].map(o=>o.value);
+ if(self){ctx.state=picked[0]||"Other";ctx.otherStates=picked.slice(1)}else{ctx.state=f.state.value;ctx.otherStates=picked}
+ if(!ctx.last&&f.last.value.trim()){ctx.first=f.first.value.trim();ctx.last=f.last.value.trim()}
+ save();renderUCP();recSummary()},300)}
+function recSummary(){document.querySelectorAll(".rec-sum").forEach(s=>{const st=[...new Set([ctx.state,...(ctx.otherStates||[])])].filter(k=>STATE_SITES[k]);s.textContent=st.length?"Recommended for: "+st.join(", "):""})}
+["#searchForm","#selfForm"].forEach(id=>{const f=$(id);if(!f)return;const sels=id==="#selfForm"?[f.states]:[f.state,f.otherStates];
+ sels.forEach(s=>{s.addEventListener("change",()=>liveStates(f));if(!s.multiple)return;const lab=(s.closest("label")||s.parentNode);const r=document.createElement("small");r.className="rec-sum";r.setAttribute("aria-live","polite");lab.after?lab.appendChild(r):0})});
+recSummary();
