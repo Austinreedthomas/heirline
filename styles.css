@@ -72,3 +72,6 @@ table.bene input,table.bene select{min-width:110px}#s-ret .ca-box,#s-other .ca-b
 .sp-list{position:absolute;z-index:20;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow:auto;box-shadow:0 10px 30px rgba(15,30,58,.15)}
 .sp-list li{padding:7px 10px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:400}.sp-list li.hi,.sp-list li:hover{background:#f6f1e7}.sp-none{color:#888;cursor:default}
 .rec-sum{display:block;margin-top:6px;color:#8a6d2f;font-weight:600;font-size:12.5px}.rec-sum:empty{display:none}
+table.bene{table-layout:fixed}table.bene td{vertical-align:top}table.bene input,table.bene select{width:100%;min-width:0;box-sizing:border-box}
+table.bene th:nth-child(1){width:24%}table.bene th:nth-child(2){width:14%}table.bene th:nth-child(3){width:12%}table.bene th:nth-child(4){width:15%}table.bene th:nth-child(5){width:27%}table.bene th:nth-child(6){width:8%}
+@media(max-width:620px){table.bene{table-layout:auto}}
