@@ -49,7 +49,7 @@ const STATE_SITES = {
  CT:{name:"Connecticut",site:"CT Big List",url:"https://ctbiglist.gov/",prefill:false},
  DE:{name:"Delaware",site:"Delaware Unclaimed Property",url:"https://unclaimedproperty.delaware.gov/",prefill:false},
  DC:{name:"District of Columbia",site:"DC Unclaimed Property",url:"https://unclaimedproperty.dc.gov/",prefill:false},
- FL:{name:"Florida",site:"Florida Treasure Hunt",url:"https://www.fltreasurehunt.gov/app/claim-search",prefill:false},
+ FL:{name:"Florida",site:"Claim Your Cash Florida",url:"https://portal.claimyourcashfl.gov/ClaimSearch",prefill:false},
  GA:{name:"Georgia",site:"Georgia Unclaimed Property",url:"https://gaclaims.unclaimedproperty.com/en/Property/SearchIndex",prefill:false},
  HI:{name:"Hawaii",site:"Hawaii Unclaimed Property",url:"https://unclaimedproperty.ehawaii.gov/lilo/property-search.html",prefill:false},
  ID:{name:"Idaho",site:"Idaho Unclaimed Property",url:"https://yourmoney.idaho.gov/",prefill:false},

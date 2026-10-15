@@ -15,3 +15,6 @@ ban, get an adapter. Today that is **California** only (records with current bal
   CO: finder list sold ($305); MI: sold to registered locators, no redistribution; IL: no bulk data or API
 - All other states: official search sites only (no public bulk download found). All 50 states + DC + PR get manual search buttons and a checklist (URLs in `STATE_SITES` in data.js).
 No scheduled refresh workflow: each rebuild adds ~50 MB (compressed) to git history.
+
+## Checking state links
+`python3 scripts/check_links.py` curls every state unclaimed-property URL in `data.js` (plus MissingMoney) and lists non-200 responses, redirects to other domains, maintenance pages and bot-block pages. Add `--all` to list every link. It exits 1 if any link is broken. Bot-blocked sites (for example MissingMoney and Minnesota) are listed as BLOCKED, not broken; check them in a normal browser.
