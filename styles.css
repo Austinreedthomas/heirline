@@ -53,3 +53,5 @@ select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-ac
 .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:0 0 18px}.features .card{margin:0}.features h3{font-size:20px}.features .num{font:600 12px Inter;color:var(--gold);letter-spacing:1.2px}
 .card.dark{background:linear-gradient(160deg,var(--ink),var(--ink2));color:#d7dbe2;border:0}.card.dark h2{color:#fff}.card.dark a{color:var(--gold2)}
 @media(max-width:620px){.toplinks{gap:10px}.stat .big{font-size:44px}}
+.auto-toggle{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:14px 0 4px;padding:12px 14px;border-radius:10px;background:#f6f1e7}
+.sw{flex-direction:row;align-items:center;gap:8px;font-weight:600}.sw input{width:18px;height:18px;accent-color:var(--ink)}

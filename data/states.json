@@ -1,0 +1,10 @@
+{
+ "CA": {
+  "asOf": "2026-10-14",
+  "claimUrl": "https://claimit.ca.gov/",
+  "minAmount": 1000,
+  "name": "California",
+  "records": 2011688,
+  "source": "https://www.sco.ca.gov/upd_download_property_records.html"
+ }
+}
