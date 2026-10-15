@@ -12,13 +12,14 @@
 <nav class="wrap steps"><button data-tab="search" class="active"><span>1</span>Search</button><button data-tab="scan"><span>2</span>Documents</button><button data-tab="plan"><span>3</span>Claim plan</button><button data-tab="track"><span>4</span>Tracker</button></nav></header>
 <main class="wrap">
 <section id="search" class="tab active"><div class="card"><h2>Search the custodian network</h2>
-<p class="hint">Try the sample: <b>Margaret Sample</b>, born 1948-03-12, SSN last four <b>4821</b>, Florida, your name <b>Daniel Sample</b>.</p>
+<p class="hint">Try the sample: <b>Margaret Sample</b>, born 1948-03-12, SSN last four <b>4821</b>, Florida, your name <b>Daniel Sample</b>. For live California records, try <b>Maria Garcia</b>, state of death <b>CA</b>, city <b>Los Angeles</b>.</p>
 <form id="searchForm" autocomplete="off">
 <h4>The person who passed away</h4>
 <div class="grid"><label>First name<input name="first" required></label><label>Last name<input name="last" required></label>
 <label>Date of birth<input type="date" name="dob"></label><label>Date of death<input type="date" name="dod"></label>
 <label>SSN <small>only the last four digits are used</small><input name="ssn" type="password" inputmode="numeric" maxlength="11" placeholder="•••-••-1234"></label>
 <label>State of death<select name="state"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option><option value="Other">Other</option></select></label>
+<label>Last city <small>optional, narrows CA matches</small><input name="city" placeholder="e.g. Los Angeles"></label>
 <label>Other states they lived in <small>Ctrl/⌘-click or tap to choose several</small><select name="otherStates" multiple size="4"><option value="FL">FL</option><option value="GA">GA</option><option value="NY">NY</option><option value="CA">CA</option><option value="TX">TX</option><option value="NC">NC</option><option value="PA">PA</option><option value="OH">OH</option><option value="IL">IL</option><option value="VA">VA</option></select></label></div>
 <h4>About you</h4>
 <div class="grid"><label>Your full name<input name="me" placeholder="Daniel Sample"></label>

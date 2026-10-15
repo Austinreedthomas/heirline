@@ -46,3 +46,5 @@ footer{font-size:12px;color:var(--muted);padding-top:20px;padding-bottom:40px;te
 a.btn{display:inline-block;padding:9px 16px;border-radius:9px;background:var(--ink);color:#fff;text-decoration:none;font-size:14px;font-weight:500;transition:all .2s}a.btn:hover{background:var(--ink2);color:var(--gold2)}
 button.link{border:0;background:none;padding:0;margin:0 4px;color:var(--gold);text-decoration:underline;font-size:13px}
 select[multiple]{padding:6px}@media(max-width:620px){.ucp-act{width:100%}.ucp-act select{flex:1}}
+.ca-box{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fdfbf7}.ca-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline}
+.tbl{overflow-x:auto}.tbl table{min-width:640px}button.small{padding:6px 10px;font-size:12px;margin:0}button:disabled{opacity:.55;cursor:default}

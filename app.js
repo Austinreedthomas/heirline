@@ -25,19 +25,44 @@ function renderUCP(){const el=$("#ucpPanel"); if(!ctx.last){el.innerHTML="";retu
  <p class="note">States hold forgotten balances, uncashed checks and old accounts. Search the name <b>${esc(name)}</b> <button type="button" class="link" id="copyName">Copy name</button>
  The official sites don't accept a pre-filled name in the link (they use a bot check), so each button opens the search page and you paste the name.</p>
  ${row("MM",MISSING_MONEY)}${states.map(s=>row(s,STATE_SITES[s])).join("")}
+ ${states.includes("CA")?`<div id="caMatches" class="ca-box"><p class="note">Searching California's public records…</p></div>`:""}
  ${ctx.state==="Other"?`<p class="note">State not listed? Use <a href="https://unclaimed.org/search-property/" target="_blank" rel="noopener">NAUPA's directory of every state's site</a>.</p>`:""}
  <p class="note">Marking a result "Found property" adds it to your claim plan and tracker.</p></div>`;
  $("#copyName").onclick=async e=>{try{await navigator.clipboard.writeText(name);e.target.textContent="Copied"}catch{prompt("Copy:",name)}};
+ if(states.includes("CA"))searchCA();
  el.querySelectorAll("[data-ucp]").forEach(s=>s.onchange=()=>{const k=s.dataset.ucp;ucp[k]=s.value;LS.set("hl_ucp",ucp);
   const S=k==="MM"?MISSING_MONEY:STATE_SITES[k];const id="ucp|"+k;
   if(s.value==="found"){if(!found.some(f=>f.id===id)){found.push({id,c:"ucp",type:"Unclaimed property · "+S.name,bal:"Shown on state site",src:"unclaimed-property search",url:S.url});
    tracker[id]??={status:"Not started",notes:"Found via "+S.site,follow:""};save()}}
   else{const i=found.findIndex(f=>f.id===id);if(i>=0&&!(tracker[id]&&tracker[id].status!=="Not started")){found.splice(i,1);delete tracker[id];save()}}})}
 renderUCP();
+// ---- Automatic California search (sharded index built by scripts/build_ca_index.py) ----
+let caMeta=null;const caCache={};const nm=s=>(s||"").toUpperCase().replace(/[^A-Z]/g,"");
+async function caShard(last){if(!caMeta)caMeta=await (await fetch("data/ca/meta.json")).json();
+ const k=nm(last);let key=k.slice(0,2);if(caMeta.shards[key]==="split")key=k.slice(0,3);
+ if(!caMeta.shards[key])return null;return caCache[key]??=await (await fetch(`data/ca/${key}.json`)).json()}
+async function searchCA(){const box=$("#caMatches");if(!box)return;
+ try{const sh=await caShard(ctx.last);const L=nm(ctx.last),F=nm(ctx.first),city=(ctx.city||"").toUpperCase().trim();
+  let rows=[];if(sh)for(const r of sh.r){if(nm(r[0])!==L)continue;const fr=nm((r[1]||"").split(" ")[0]);
+   let m=null;if(F&&fr===F)m="exact";else if(F&&(fr[0]===F[0])&&(fr.length===1||F.startsWith(fr)||fr.startsWith(F)))m="close";if(!m)continue;
+   if(city&&r[2]!==city)continue;rows.push({m,last:r[0],rest:r[1],city:r[2],zip:r[3],type:sh.t[r[4]],amt:r[5],holder:sh.h[r[6]],id:r[7],paid:r[8]})}
+  rows.sort((a,b)=>(a.m>b.m?-1:a.m<b.m?1:0)||b.amt-a.amt);const shown=rows.slice(0,50);
+  const fmt=n=>"$"+n.toLocaleString("en-US");
+  box.innerHTML=`<div class="ca-head"><h4 style="margin:0">California records · automatic search</h4><span class="note">Data as of ${caMeta.asOf} · records of ${fmt(caMeta.minAmount)}+ only · ${caMeta.records.toLocaleString()} records</span></div>
+  ${rows.length?`<p class="note">${rows.length} possible match${rows.length>1?"es":""} for <b>${esc(ctx.last)}, ${esc(ctx.first)}</b>${city?" in "+esc(city):""}${rows.length>50?" (showing top 50)":""}. Confirm the address matches before claiming.</p>
+  <div class="tbl"><table><tr><th>Match</th><th>Owner on record</th><th>City</th><th>Amount</th><th>Holder</th><th>Property ID</th><th></th></tr>
+  ${shown.map(r=>{const id="ca|"+r.id,on=found.some(f=>f.id===id);return `<tr><td><span class="tag ${r.m==="exact"?"gold":""}">${r.m}</span></td><td>${esc(r.last+" "+r.rest)}</td><td>${esc(r.city)} ${esc(r.zip)}</td><td>${fmt(r.amt)}${r.paid?' <small class="no">claim paid before</small>':""}</td><td>${esc(r.holder)}<br><small class="note">${esc(r.type)}</small></td><td>${esc(r.id)}</td>
+   <td><button class="small" data-ca='${esc(JSON.stringify(r))}' ${on?"disabled":""}>${on?"In tracker":"Add to tracker"}</button></td></tr>`}).join("")}</table></div>
+  <p class="note">To claim, open <a href="${caMeta.claimUrl}" target="_blank" rel="noopener">California's official ClaimIt site ↗</a>, search the name, and pick the record with the matching Property ID.</p>`
+  :`<p class="note">No California records of ${fmt(caMeta.minAmount)}+ for ${esc(ctx.last)}, ${esc(ctx.first)}. Smaller amounts aren't in this index, so still search the official site.</p>`}`;
+  box.querySelectorAll("[data-ca]").forEach(b=>b.onclick=()=>{const r=JSON.parse(b.dataset.ca);const id="ca|"+r.id;
+   if(!found.some(f=>f.id===id)){found.push({id,c:"ucp",type:`CA unclaimed property · ${r.holder}`,bal:fmt(r.amt)+" (as of "+caMeta.asOf+")",src:"California public records",hint:"Property ID "+r.id,url:caMeta.claimUrl});
+    tracker[id]??={status:"Not started",notes:`CA Property ID ${r.id}, ${r.type}, ${r.city}`,follow:""};save()}b.textContent="In tracker";b.disabled=true});
+ }catch(e){box.innerHTML=`<p class="note">California search needs the hosted site (it couldn't load the data here${location.protocol==="file:"?": open the GitHub Pages version":""}).</p>`}}
 
 $("#searchForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
  const ssn4=(f.ssn||"").replace(/\D/g,"").slice(-4); e.target.ssn.value=""; // never kept
- ctx={first:f.first.trim(),last:f.last.trim(),dob:f.dob,dod:f.dod,state:f.state,otherStates:[...e.target.otherStates.selectedOptions].map(o=>o.value),me:f.me.trim(),rel:f.rel,role:f.role}; save(); renderUCP();
+ ctx={first:f.first.trim(),last:f.last.trim(),dob:f.dob,dod:f.dod,state:f.state,otherStates:[...e.target.otherStates.selectedOptions].map(o=>o.value),city:(f.city||"").trim(),me:f.me.trim(),rel:f.rel,role:f.role}; save(); renderUCP();
  const n=s=>s.toLowerCase().trim();
  const matches=PEOPLE.filter(p=>n(p.last)===n(f.last)&&n(p.first)===n(f.first)&&(!f.dob||p.dob===f.dob)&&(!ssn4||p.ssn4===ssn4));
  const out=$("#results");
