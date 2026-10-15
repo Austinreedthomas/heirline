@@ -1,0 +1,6 @@
+FORM 1099-R  2025  Distributions From Pensions, Annuities, Retirement or Profit-Sharing Plans, IRAs
+PAYER: Fidelity Investments, PO Box 770002, Cincinnati OH 45277
+RECIPIENT: MARGARET A. SAMPLE   Recipient TIN: XXX-XX-4821
+Account number: Z12-345678 (Traditional IRA)
+Box 1 Gross distribution: 12,400.00   Box 7 Distribution code: 7
+SAMPLE DOCUMENT - NOT REAL
